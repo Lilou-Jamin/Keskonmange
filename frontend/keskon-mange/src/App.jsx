@@ -5,17 +5,17 @@ import Home from './pages/Home.jsx'
 import MainNavigation from './components/MainNavigation.jsx'
 import axios from 'axios'
 
-const getAllRecipes = async () => {
-  let allRecipes = []
-  await axios.get('http://localhost:5000/recipe').then((res) => {
-    allRecipes = res.data
+const getAllIngredients = async () => {
+  let allIngredients = []
+  await axios.get('http://localhost:5000/ingredients').then((res) => {
+    allIngredients = res.data
   })
-  return allRecipes
+  return allIngredients
 }
 
 const router = createBrowserRouter([
   {path: '/', element: <MainNavigation />, children: [
-    {path: '/', element: <Home />, loader: getAllRecipes},
+    {path: '/', element: <Home />, loader: getAllIngredients},
   ]},
 ])
 

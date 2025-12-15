@@ -10,7 +10,8 @@ connectDB();
 
 app.use(express.json());
 app.use(cors());
-app.use('/recipe', require('./routes/recipe'));
+app.use('/meals', require('./routes/meal'));
+app.use('/ingredients', require('./routes/ingredient'));
 
 app.listen(PORT, (err) => {
     console.log(`App is running on port ${PORT}`);
