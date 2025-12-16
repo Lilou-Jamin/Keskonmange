@@ -1,26 +1,44 @@
 import React from 'react'
 import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Home from './pages/Home.jsx'
+import Base from './pages/Base.jsx'
 import MainNavigation from './components/MainNavigation.jsx'
 import axios from 'axios'
 
-const getAllIngredients = async () => {
-  let allIngredients = []
-  await axios.get('http://localhost:5000/ingredients').then((res) => {
-    allIngredients = res.data
-  })
-  return allIngredients
-}
+import { Routes, Route } from "react-router-dom";
+import Welcome from './pages/login/Welcome.jsx'
+import Login from "./pages/login/Login.jsx";
+import Register from "./pages/login/Register.jsx";
 
-const router = createBrowserRouter([
-  {path: '/', element: <MainNavigation />, children: [
-    {path: '/', element: <Home />, loader: getAllIngredients},
-  ]},
-])
+import Home from './pages/Home.jsx';
 
 export default function App() {
   return (
-    <><RouterProvider router={router} /></>
-  )
+    <Routes>
+      <Route path="/" element={<Welcome />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/home" element={<Home />} />
+    </Routes>
+  );
 }
+
+// const getAllIngredients = async () => {
+//   let allIngredients = []
+//   await axios.get('http://localhost:5000/ingredients').then((res) => {
+//     allIngredients = res.data
+//   })
+//   return allIngredients
+// }
+
+// const router = createBrowserRouter([
+//   {path: '/', element: <MainNavigation />, children: [
+//     {path: '/', element: <Home />, loader: getAllIngredients},
+//   ]},
+// ])
+
+// export default function App() {
+//   return (
+//     <><RouterProvider router={router} /></>
+//   )
+// }
