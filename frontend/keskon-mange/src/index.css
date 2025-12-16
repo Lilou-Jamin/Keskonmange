@@ -1,12 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import "tailwindcss";
+
 :root {
   --beige-color: #FFF7EC;
   --orange-color: #FD8F00;
   --yellow-color: #EAA603;
   --grey-color: #686868;
 
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: "Inter", sans-serif;
+  line-height: 1.2;
   font-weight: 400;
+  
 
   color-scheme: light dark;
   color: black;
@@ -37,29 +41,27 @@ body {
 
 h1 {
   font-size: 1.3rem;
+  font-weight: 600;
 }
 
 p {
   font-size: 1rem;
-}
-
-.link-button {
-  border-radius: 100px;
-  border: 1px solid transparent;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: var(--yellow-color);
-  cursor: pointer;
-  transition: border-color 0.25s;
-  margin-top: 1rem;
-  color: white;
+  margin: 0.5rem 0;
 }
 
 .link{
   text-decoration: none;
   color: inherit;
+  font-weight: bold;
+}
+
+.link-button{
+  text-decoration: none;
+  color: inherit;
+}
+
+.link-button:hover {
+  color: white;
 }
 
 .link-orange {
@@ -93,16 +95,15 @@ button {
   background-color: var(--yellow-color);
   cursor: pointer;
   transition: border-color 0.25s;
-  margin-top: 1rem;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  color: white;
+  margin: 1rem 0;
 }
 
+button:hover {
+  background-color: var(--orange-color);
+  transform: scale(1.05);
+  transition: transform 0.2s;
+}
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

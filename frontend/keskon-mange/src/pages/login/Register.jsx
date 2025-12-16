@@ -5,14 +5,16 @@ export default function Register() {
   return (
     <>
         <div>
-            <img src={Logo} alt="Keskon Mange Logo" />
+            <img src={Logo} alt="Keskon Mange Logo" className='m-auto my-8' />
             <h1>Créer un compte</h1>
 
-            <input type="text" className="input" placeholder="Adresse e-mail" />
-            <input type="text" className="input" placeholder="Nom d'utilisateur" />
-            <input type="password" className="input" placeholder="Mot de passe" />
+            <div className='my-2 space-y-2'>
+                <input type="text" className="input max-w-fit" placeholder="Adresse e-mail" />
+                <input type="text" className="input max-w-fit" placeholder="Nom d'utilisateur" />
+                <input type="password" className="input max-w-fit" placeholder="Mot de passe" />
+            </div>
 
-            <button><Link to="/home" className="link-button">S'inscrire</Link></button>
+            <button><Link to="/home" className="link">S'inscrire</Link></button>
 
             <p>Vous avez déjà un compte ? <Link to="/login" className="link">Se connecter</Link></p>
         </div>

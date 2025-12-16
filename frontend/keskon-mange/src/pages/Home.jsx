@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <>
         <div>
-            <img src={Logo} alt="Keskon Mange Logo" />
+            <img src={Logo} alt="Keskon Mange Logo" className='m-auto'/>
             <div>
                 <h1>Besoin d'idées de repas ?</h1>
                 <p>Importez vos ingrédients et découvrez des recettes personnalisées en quelques secondes !</p>
