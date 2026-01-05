@@ -6,6 +6,7 @@
   --orange-color: #FD8F00;
   --yellow-color: #EAA603;
   --grey-color: #686868;
+  --red-color: #b00000;
 
   font-family: "Inter", sans-serif;
   line-height: 1.2;
@@ -34,7 +35,6 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -42,6 +42,15 @@ body {
 h1 {
   font-size: 1.3rem;
   font-weight: 600;
+}
+
+h2 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+h2::active {
+  color: var(--orange-color);
 }
 
 p {
@@ -104,6 +113,11 @@ button:hover {
   transform: scale(1.05);
   transition: transform 0.2s;
 }
+
+.error-message {
+  color: var(--red-color);
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

@@ -1,6 +1,5 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-import IngredientItem from '../components/IngredientItem'
 import Welcome from './login/Welcome'
 
 export default function Base() {
@@ -8,7 +7,6 @@ export default function Base() {
     <>
         <div>
             <Welcome />
-            {/* <IngredientItem /> */}
         </div>
     </>
   )
