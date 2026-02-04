@@ -1,6 +1,7 @@
 import Logo from '../../assets/logo.svg'
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { backendBaseUrl } from "../../utils.js";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export default function Register() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/auth/register", {
+      const res = await fetch(`${backendBaseUrl}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, username, password }),

@@ -1,6 +1,7 @@
 import Logo from '../../assets/logo.svg'
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { backendBaseUrl } from "../../utils.js";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function Login() {
     setError(null);
 
     try {
-      const res = await fetch("http://localhost:5000/auth/login", {
+      const res = await fetch(`${backendBaseUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

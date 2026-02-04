@@ -24,7 +24,7 @@ export default function App() {
 
 // const getAllIngredients = async () => {
 //   let allIngredients = []
-//   await axios.get('http://localhost:5000/ingredients').then((res) => {
+//   await axios.get(`${backendBaseUrl}/ingredients`).then((res) => {
 //     allIngredients = res.data
 //   })
 //   return allIngredients

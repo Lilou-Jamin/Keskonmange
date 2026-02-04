@@ -1,3 +1,13 @@
+# Setup
+
+## Environment
+
+Copy the `.env.example` file to `.env` and change the environment variables for your environment.
+
+## Local browser development
+
+`npm run dev`
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
