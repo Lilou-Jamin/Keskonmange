@@ -40,10 +40,17 @@ Make sure the vite server is configured to listen everywhere:
 export default defineConfig({
   server: {
     host: '0.0.0.0',
+    hmr: {
+      // Input your PC local IP address into this field
+      host: "192.168.1.10",
+      protocol: "ws",
+    },
   },
   // The rest of the config
 })
 ```
+
+If you get websocket errors, hot reloading will not work and you have to close and reopen the app for the changes to be visible. Check if the IP address in the hmr section is correct and check your network and firewall settings.
 
 Then, run `npx tauri android dev` and follow the instructions.
 

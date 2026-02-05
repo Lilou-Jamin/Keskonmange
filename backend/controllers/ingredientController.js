@@ -11,7 +11,7 @@ const getListIngredients = async (req, res) => {
 };
 
 const getIngredientById = async (req, res) => {
-  console.log("Ingredient ID:", req.params.id);
+  console.log('Ingredient ID:', req.params.id);
   try {
     const ingredient = await Ingredients.findById(req.params.id);
 
@@ -21,7 +21,6 @@ const getIngredientById = async (req, res) => {
 
     return res.json(ingredient);
   } catch (error) {
-    
     console.error(error);
     return res.status(500).json({ message: 'Erreur serveur.' });
   }

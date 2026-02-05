@@ -3,7 +3,7 @@ const Meals = require('../models/mealModel');
 const getListMeals = async (req, res) => {
   try {
     const meals = await Meals.find();
-    console.log("allo:", meals);
+    console.log('allo:', meals);
     return res.status(200).json(meals);
   } catch (error) {
     console.error(error);
@@ -14,7 +14,7 @@ const getListMeals = async (req, res) => {
 const getListOf10RandomMeals = async (req, res) => {
   try {
     const meals = await Meals.find10RandomMeals();
-    console.log("random meals:", meals);
+    console.log('random meals:', meals);
     return res.status(200).json(meals);
   } catch (error) {
     console.error(error);
@@ -42,14 +42,12 @@ const addMeal = async (req, res) => {
     const { title, ingredients, instructions, time, image } = req.body;
 
     if (!title || !ingredients || !instructions) {
-      return res
-        .status(400)
-        .json({ message: 'Tous les champs sont requis.' });
+      return res.status(400).json({ message: 'Tous les champs sont requis.' });
     }
 
     const newMeal = await Meals.create({
       title,
-      ingredients,    // doit être un tableau JS pour être converti en TEXT[]
+      ingredients, // doit être un tableau JS pour être converti en TEXT[]
       instructions,
       time,
       image,

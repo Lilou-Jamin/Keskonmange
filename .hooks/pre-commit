@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -e
+
+echo "Linting frontend..."
+cd frontend/keskon-mange
+npx lint-staged
+
+echo ""
+echo ""
+echo "Linting backend..."
+cd ../..
+cd backend
+npx lint-staged
+cd ../..
