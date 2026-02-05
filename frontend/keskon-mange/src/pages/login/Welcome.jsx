@@ -1,6 +1,6 @@
-import Logo from '../../assets/logo.svg'
-import RecipesExamples from '../../assets/recipes_examples.png'
-import {Link} from "react-router-dom";
+import Logo from '../../assets/logo.svg';
+import RecipesExamples from '../../assets/recipes_examples.png';
+import { Link } from 'react-router-dom';
 
 export default function Welcome() {
   return (
@@ -14,12 +14,19 @@ export default function Welcome() {
           <img src={RecipesExamples} alt="Exemples de recettes" className="mx-auto" />
 
           <button>
-            <Link to="/login" className="link-button">Se connecter</Link>
+            <Link to="/login" className="link-button">
+              Se connecter
+            </Link>
           </button>
 
-          <p>Vous n'avez pas de compte ? <Link to="/register" className="link">Inscrivez-vous</Link></p>
+          <p>
+            Vous n'avez pas de compte ?{' '}
+            <Link to="/register" className="link">
+              Inscrivez-vous
+            </Link>
+          </p>
         </div>
       </div>
     </>
-  )
+  );
 }

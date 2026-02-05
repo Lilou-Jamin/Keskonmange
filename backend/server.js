@@ -17,5 +17,5 @@ app.use('/ingredients', require('./routes/ingredientRoutes.js'));
 app.use('/auth', userRoutes);
 
 app.listen(PORT, (err) => {
-    console.log(`App is running on port ${PORT}`);
+  console.log(`App is running on port ${PORT}`);
 });

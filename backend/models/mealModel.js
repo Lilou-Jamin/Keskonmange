@@ -2,24 +2,17 @@ const { pool } = require('../config/connectionDb');
 
 class Meal {
   static async find() {
-    const result = await pool.query(
-      'SELECT * FROM meals'
-    );
+    const result = await pool.query('SELECT * FROM meals');
     return result.rows;
   }
 
   static async find10RandomMeals() {
-    const result = await pool.query(
-      'SELECT * FROM meals ORDER BY RANDOM() LIMIT 10;'
-    );
+    const result = await pool.query('SELECT * FROM meals ORDER BY RANDOM() LIMIT 10;');
     return result.rows;
   }
 
   static async findById(id) {
-    const result = await pool.query(
-      'SELECT * FROM meals WHERE id = $1',
-      [id]
-    );
+    const result = await pool.query('SELECT * FROM meals WHERE id = $1', [id]);
     return result.rows[0]; // undefined si rien trouvé
   }
 

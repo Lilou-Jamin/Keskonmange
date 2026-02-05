@@ -1,13 +1,13 @@
-import React from 'react'
-import './App.css'
-import Base from './pages/Base.jsx'
-import MainNavigation from './components/MainNavigation.jsx'
-import axios from 'axios'
+import React from 'react';
+import './App.css';
+import Base from './pages/Base.jsx';
+import MainNavigation from './components/MainNavigation.jsx';
+//import axios from 'axios';
 
-import { Routes, Route } from "react-router-dom";
-import Welcome from './pages/login/Welcome.jsx'
-import Login from "./pages/login/Login.jsx";
-import Register from "./pages/login/Register.jsx";
+import { Routes, Route } from 'react-router-dom';
+import Welcome from './pages/login/Welcome.jsx';
+import Login from './pages/login/Login.jsx';
+import Register from './pages/login/Register.jsx';
 
 import Home from './pages/Home.jsx';
 
