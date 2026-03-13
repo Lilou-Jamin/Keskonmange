@@ -1,6 +1,11 @@
 const Meals = require('../models/mealModel');
+const { verifyToken } = require('../utils/token');
 
 const getListMeals = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+
   try {
     const meals = await Meals.find();
     console.log('allo:', meals);
@@ -12,6 +17,10 @@ const getListMeals = async (req, res) => {
 };
 
 const getListOf10RandomMeals = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+
   try {
     const meals = await Meals.find10RandomMeals();
     console.log('random meals:', meals);
@@ -23,6 +32,10 @@ const getListOf10RandomMeals = async (req, res) => {
 };
 
 const getMealById = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+
   try {
     const meal = await Meals.findById(req.params.id);
 
@@ -38,6 +51,10 @@ const getMealById = async (req, res) => {
 };
 
 const addMeal = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+
   try {
     const { title, ingredients, instructions, time, image } = req.body;
 

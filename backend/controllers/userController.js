@@ -1,9 +1,6 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const User = require('../models/userModel.js');
-
-const JWT_SECRET = process.env.JWT_SECRET || 'change-me';
-const JWT_EXPIRES_IN = '2h';
+const { createToken } = require('../utils/token');
 
 const register = async (req, res) => {
   try {
@@ -19,10 +16,15 @@ const register = async (req, res) => {
     }
 
     // on check les conditions du password
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
 
     if (!passwordRegex.test(password)) {
-      return res.status(400).json({ message: 'Le mot de passe doit contenir au moins 8 caractères, avec une majuscule, une minuscule, un chiffre et un caractère spécial'})    
+      return res
+        .status(400)
+        .json({
+          message:
+            'Le mot de passe doit contenir au moins 8 caractères, avec une majuscule, une minuscule, un chiffre et un caractère spécial',
+        });
     }
 
     // hashage du mdp avec 10 de salage
@@ -53,9 +55,7 @@ const login = async (req, res) => {
       return res.status(401).json({ message: 'Identifiants invalides' });
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
-    });
+    const token = createToken(user);
 
     return res.status(200).json({
       token,

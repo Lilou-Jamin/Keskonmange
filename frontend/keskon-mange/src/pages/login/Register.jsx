@@ -33,10 +33,8 @@ export default function Register() {
         return;
       }
 
-      // on stocke le token
-      localStorage.setItem('token', payload.token);
-
-      navigate('/home');
+      // Une fois l'inscription complète, il faut encore que l'utilisateur se login
+      navigate('/login');
     } catch (err) {
       console.error(err);
       setError('Erreur veuillez réessayer');

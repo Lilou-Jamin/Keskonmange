@@ -1,6 +1,11 @@
 const Ingredients = require('../models/ingredientModel');
+const { verifyToken } = require('../utils/token');
 
 const getListIngredients = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+
   try {
     const ingredients = await Ingredients.find();
     return res.status(200).json(ingredients);
@@ -11,6 +16,10 @@ const getListIngredients = async (req, res) => {
 };
 
 const getIngredientById = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+
   console.log('Ingredient ID:', req.params.id);
   try {
     const ingredient = await Ingredients.findById(req.params.id);
@@ -27,6 +36,10 @@ const getIngredientById = async (req, res) => {
 };
 
 // const addIngredient = async (req, res) => {
+//   if (!verifyToken(req)) {
+//     return res.status(401).json({ message: 'Invalid Authentication Token' })
+//   }
+//
 //   try {
 //     const { title, ingredients, instructions, time, image } = req.body;
 

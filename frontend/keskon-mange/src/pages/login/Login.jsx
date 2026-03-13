@@ -2,6 +2,7 @@ import Logo from '../../assets/logo.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { backendBaseUrl } from '../../utils.js';
+import axios from 'axios';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -31,6 +32,9 @@ export default function Login() {
       // On stocke le token et les infos utilisateur
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
+
+      // Pour chaque requête vers le backend, on met le token dans le header
+      axios.defaults.headers['authentication'] = data.token;
 
       navigate('/home');
     } catch (err) {
