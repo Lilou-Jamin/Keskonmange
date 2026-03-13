@@ -21,7 +21,7 @@ const register = async (req, res) => {
     // hashage du mdp avec 10 de salage
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await User.createUser({ email, username, passwordHash });
-    res.status(201).json({ user, token });
+    res.status(201).json({ user });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Erreur serveur' });

@@ -3,6 +3,7 @@ import Logo from '../assets/logo.svg';
 import ArrowOrange from '../assets/arrow_orange.svg';
 import Navbar from '../components/Navbar';
 import RecipePreview from '../components/RecipePreview';
+import CarouselMeals from '../components/CarouselMeals.jsx';
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -49,13 +50,16 @@ export default function Home() {
         {loading ? (
           <p>Chargement...</p>
         ) : (
-          <ul className="mt-4 space-y-2">
-            {randomMeals.map((meal) => (
-              <li key={meal.id_meal}>
-                <RecipePreview id={meal.id_meal} title={meal.str_meal} thumb={meal.str_meal_thumb} />
-              </li>
-            ))}
-          </ul>
+          <div>
+            {/* <CarouselMeals title='Les 10 recettes du jour' /> */}
+            <ul className="mt-4 space-y-2">
+              {randomMeals.map((meal) => (
+                <li key={meal.id_meal}>
+                  <RecipePreview id={meal.id_meal} title={meal.str_meal} thumb={meal.str_meal_thumb} />
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
 

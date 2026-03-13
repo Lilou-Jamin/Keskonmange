@@ -8,6 +8,7 @@ import { Routes, Route } from 'react-router-dom';
 import Welcome from './pages/login/Welcome.jsx';
 import Login from './pages/login/Login.jsx';
 import Register from './pages/login/Register.jsx';
+import Profile from './pages/profile/Profile.jsx';
 
 import Home from './pages/Home.jsx';
 
@@ -18,6 +19,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/home" element={<Home />} />
+      <Route path="/profile" element={<Profile />} />
     </Routes>
   );
 }
