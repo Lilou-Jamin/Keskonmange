@@ -18,6 +18,13 @@ const register = async (req, res) => {
       return res.status(409).json({ message: 'Email déjà utilisé' });
     }
 
+    // on check les conditions du password
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ message: 'Le mot de passe doit contenir au moins 8 caractères, avec une majuscule, une minuscule, un chiffre et un caractère spécial'})    
+    }
+
     // hashage du mdp avec 10 de salage
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await User.createUser({ email, username, passwordHash });

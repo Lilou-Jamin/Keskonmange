@@ -43,10 +43,10 @@ export default function Login() {
     <>
       <div className="p-4 min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <img src={Logo} alt="Keskon Mange Logo" className="m-auto mb-8" />
+          <img src={Logo} alt="Keskon Mange Logo" className="mx-auto mb-8" />
           <h1>Connecter un compte</h1>
 
-          <form onSubmit={handleSubmit} className="my-2 space-y-2">
+          <form onSubmit={handleSubmit} className="flex flex-col items-center my-2 space-y-2">
             <input
               type="email"
               name="email"
