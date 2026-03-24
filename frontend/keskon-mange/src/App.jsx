@@ -11,6 +11,7 @@ import Register from './pages/login/Register.jsx';
 import Profile from './pages/profile/Profile.jsx';
 
 import Home from './pages/Home.jsx';
+import Inventory from './pages/profile/Inventory.jsx';
 
 export default function App() {
   // Pour chaque requête vers le backend, on met le token dans le header
@@ -34,6 +35,7 @@ export default function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/home" element={<Home />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/profile/inventory" element={<Inventory />}></Route>
     </Routes>
   );
 }
