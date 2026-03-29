@@ -23,7 +23,34 @@ const getListOf10RandomMeals = async (req, res) => {
 
   try {
     const meals = await Meals.find10RandomMeals();
-    console.log('random meals:', meals);
+    return res.status(200).json(meals);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur serveur.' });
+  }
+};
+
+const getListOf10RandomDesserts = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+
+  try {
+    const meals = await Meals.find10RandomDesserts();
+    return res.status(200).json(meals);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur serveur.' });
+  }
+};
+
+const getListOf10RandomVegetarians = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+
+  try {
+    const meals = await Meals.find10RandomVegetarians();
     return res.status(200).json(meals);
   } catch (error) {
     console.error(error);
@@ -80,6 +107,8 @@ const addMeal = async (req, res) => {
 module.exports = {
   getListMeals,
   getListOf10RandomMeals,
+  getListOf10RandomDesserts,
+  getListOf10RandomVegetarians,
   getMealById,
   addMeal,
 };

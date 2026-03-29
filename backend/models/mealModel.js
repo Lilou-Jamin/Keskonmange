@@ -11,6 +11,16 @@ class Meal {
     return result.rows;
   }
 
+  static async find10RandomDesserts() {
+    const result = await pool.query(`SELECT * FROM meals WHERE str_category = 'Dessert' ORDER BY RANDOM() LIMIT 10;`);
+    return result.rows;
+  }
+
+  static async find10RandomVegetarians() {
+    const result = await pool.query(`SELECT * FROM meals WHERE str_category = 'Vegetarian' ORDER BY RANDOM() LIMIT 10;`);
+    return result.rows;
+  }
+
   static async findById(id) {
     const result = await pool.query('SELECT * FROM meals WHERE id = $1', [id]);
     return result.rows[0]; // undefined si rien trouvé
