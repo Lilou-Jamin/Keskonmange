@@ -29,7 +29,7 @@ export default function CarouselMeals({ fetchFunction, title, storageKey }) {
   useEffect(() => {
     const load = async () => {
       try {
-        const today = new Date().toISOString().slice(0, 10); // ex: "2026-03-29"
+        const today = new Date().toISOString().slice(0, 10);
         const cachedValue = localStorage.getItem(storageKey);
 
         if (cachedValue) {

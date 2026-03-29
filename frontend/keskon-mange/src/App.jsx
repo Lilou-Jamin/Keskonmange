@@ -12,6 +12,7 @@ import Profile from './pages/profile/Profile.jsx';
 
 import Home from './pages/Home.jsx';
 import Inventory from './pages/profile/Inventory.jsx';
+import RecipePage from './pages/RecipePage.jsx';
 
 export default function App() {
   // Pour chaque requête vers le backend, on met le token dans le header
@@ -36,6 +37,7 @@ export default function App() {
       <Route path="/home" element={<Home />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/profile/inventory" element={<Inventory />}></Route>
+      <Route path="/meals/:id" element={<RecipePage />} />
     </Routes>
   );
 }

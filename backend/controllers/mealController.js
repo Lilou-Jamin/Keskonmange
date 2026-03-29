@@ -77,6 +77,23 @@ const getMealById = async (req, res) => {
   }
 };
 
+const getMealIngredients = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+
+  try {
+    const meal = await Meals.findMealIngredients(req.params.id);
+    if (!meal) {
+      return res.status(404).json({ message: 'Recette non trouvée.' });
+    }
+    return res.json(meal);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur serveur.' });
+  }
+};
+
 const addMeal = async (req, res) => {
   if (!verifyToken(req)) {
     return res.status(401).json({ message: 'Invalid Authentication Token' });
@@ -110,5 +127,6 @@ module.exports = {
   getListOf10RandomDesserts,
   getListOf10RandomVegetarians,
   getMealById,
+  getMealIngredients,
   addMeal,
 };
