@@ -3,11 +3,22 @@ const { verifyToken } = require('../utils/token');
 
 // retourne l'inventaire complet de l'utilisateur authentifié
 // GET /
+// OU
+// GET /?joined=1
 // returns: [
 //   {
 //      id: int
 //      id_user: string (uuid)
 //      id_ingredient: int
+//      qty: int
+//   }
+// ]
+// OU
+// returns: [
+//   {
+//      id: int
+//      id_user: string (uuid)
+//      ingredient: (ingredient)
 //      qty: int
 //   }
 // ]
@@ -17,13 +28,18 @@ const { verifyToken } = require('../utils/token');
 // - 500: erreur serveur
 //
 const getUserInventory = async (req, res) => {
+  let joined = false;
+  if (req.query.joined === '1') {
+    joined = true;
+  }
+
   const token = verifyToken(req);
   if (!token) {
     return res.status(401).json({ message: 'Invalid Authentication Token' });
   }
 
   try {
-    const inventory = await Inventory.findByUserId(token.id);
+    const inventory = await Inventory.findByUserId(token.id, joined);
 
     if (!inventory) {
       return res.status(404).json({ message: 'Inventaire vide.' });

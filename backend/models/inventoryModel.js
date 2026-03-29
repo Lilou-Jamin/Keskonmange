@@ -11,8 +11,16 @@ class Inventory {
     return result.rows[0];
   }
 
-  static async findByUserId(id) {
-    const result = await pool.query('SELECT * FROM lien_users_ingredients WHERE id_user = $1', [id]);
+  static async findByUserId(id, joined = false) {
+    let result;
+    if (joined) {
+      result = await pool.query(
+        'SELECT * FROM lien_users_ingredients JOIN ingredients USING(id_ingredient) WHERE id_user = $1',
+        [id]
+      );
+    } else {
+      result = await pool.query('SELECT * FROM lien_users_ingredients WHERE id_user = $1', [id]);
+    }
     return result.rows;
   }
 

@@ -6,9 +6,11 @@ import CartIcon from '../../assets/cart_icon.svg';
 import Navbar from '../../components/Navbar.jsx';
 import axios from 'axios';
 import Logo from '../../assets/logo.svg';
+import { useEffect, useState } from 'react';
 
 export default function Profile() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
   const handleLogout = () => {
     // On stocke le token et les infos utilisateur
@@ -21,12 +23,13 @@ export default function Profile() {
     navigate('/');
   };
 
-  let user;
-  try {
-    user = JSON.parse(localStorage.getItem('user'));
-  } catch {
-    handleLogout();
-  }
+  useEffect(() => {
+    try {
+      setUser(JSON.parse(localStorage.getItem('user')));
+    } catch {
+      handleLogout();
+    }
+  }, []);
 
   return (
     <>
@@ -36,7 +39,7 @@ export default function Profile() {
 
           <div className="mb-8 flex flex-row items-center gap-4">
             <img src={IconProfile} alt="Icône de profil" className="" />
-            <h2> {user.username} </h2>
+            <h2> {user?.username} </h2>
           </div>
 
           <Link to="/profile/inventory" className="link">
