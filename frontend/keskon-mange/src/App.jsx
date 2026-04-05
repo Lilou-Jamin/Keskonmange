@@ -11,6 +11,7 @@ import Register from './pages/login/Register.jsx';
 import Profile from './pages/profile/Profile.jsx';
 
 import Home from './pages/Home.jsx';
+import SearchMeal from './pages/SearchMeal.jsx';
 import Inventory from './pages/profile/Inventory.jsx';
 import RecipePage from './pages/RecipePage.jsx';
 
@@ -35,29 +36,10 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/home" element={<Home />} />
+      <Route path="/search-meal" element={<SearchMeal />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/profile/inventory" element={<Inventory />}></Route>
       <Route path="/meals/:id" element={<RecipePage />} />
     </Routes>
   );
 }
-
-// const getAllIngredients = async () => {
-//   let allIngredients = []
-//   await axios.get(`${backendBaseUrl}/ingredients`).then((res) => {
-//     allIngredients = res.data
-//   })
-//   return allIngredients
-// }
-
-// const router = createBrowserRouter([
-//   {path: '/', element: <MainNavigation />, children: [
-//     {path: '/', element: <Home />, loader: getAllIngredients},
-//   ]},
-// ])
-
-// export default function App() {
-//   return (
-//     <><RouterProvider router={router} /></>
-//   )
-// }

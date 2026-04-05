@@ -15,6 +15,7 @@ app.use(cors());
 app.use('/meals', require('./routes/mealRoutes.js'));
 app.use('/ingredients', require('./routes/ingredientRoutes.js'));
 app.use('/inventory', require('./routes/inventoryRoutes.js'));
+app.use('/users', require('./routes/userRoutes.js'));
 app.use('/auth', userRoutes);
 
 app.listen(PORT, () => {

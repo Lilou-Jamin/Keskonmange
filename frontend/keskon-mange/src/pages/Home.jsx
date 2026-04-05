@@ -19,7 +19,7 @@ export default function Home() {
             <div className="flex flex-row items-center gap-2">
               <img src={ArrowOrange} alt="Flèche orange" />
               <Link to="/search-meal" className="link-orange">
-                Essayez
+                Essayer
               </Link>
             </div>
           </div>

@@ -5,12 +5,17 @@ import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { backendBaseUrl } from '../utils';
 import Navbar from '../components/Navbar';
+import Header from '../components/Header';
+import HeartFilled from '../assets/heart_filled.svg';
+import HeartOutlined from '../assets/heart_outlined.svg';
 
 export default function RecipePage() {
     const { id } = useParams();
+    const id_user = JSON.parse(localStorage.getItem('user'))?.id;
     const [nbPersonnes, setNbPersonnes] = useState(4);
     const [recipe, setRecipe] = useState(null);
     const [baseIngredients, setBaseIngredients] = useState([]);
+    const [favorites, setFavorites] = useState({ isFavorite: false });
 
     const fetchRecipeById = async () => {
         const recipe = await axios.get(`${backendBaseUrl}/meals/${id}`);
@@ -20,6 +25,55 @@ export default function RecipePage() {
     const fetchRecipeIngredients = async () => {
         const response = await axios.get(`${backendBaseUrl}/meals/${id}/ingredients`);
         return response.data;
+    };
+
+    const addToFavorites = async () => {
+        try {
+            await axios.post(`${backendBaseUrl}/users/addfavorite`, {
+            id_user: JSON.parse(localStorage.getItem('user')).id,
+            id_meal: id,
+            });
+
+            setFavorites({ isFavorite: true });
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const removeFromFavorites = async () => {
+        try {
+            await axios.post(`${backendBaseUrl}/users/deletefavorite`, {
+            id_user: JSON.parse(localStorage.getItem('user')).id,
+            id_meal: id,
+            });
+
+            setFavorites({ isFavorite: false });
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const fetchFavorites = async () => {
+        try {
+            const response = await axios.get(`${backendBaseUrl}/users/getfavorite/${id_user}`, {
+            params: {
+                id_user: JSON.parse(localStorage.getItem('user')).id,
+                id_meal: id,
+            },
+            });
+            return response.data;
+        } catch (e) {
+            console.error(e);
+            return [];
+        }
+    };
+
+    const toggleFavorite = async () => {
+        if (favorites.isFavorite) {
+            await removeFromFavorites();
+        } else {
+            await addToFavorites();
+        }
     };
 
     const updateQuantities = (newNbPersonnes) => {
@@ -52,35 +106,51 @@ export default function RecipePage() {
     useEffect(() => {
         const loadRecipe = async () => {
             try {
-                const recipe = await fetchRecipeById();
-                const ingredients = await fetchRecipeIngredients();
-                const data = {};
-                data.meal = recipe;
-                data.ingredients = ingredients;
-                setRecipe(data);
-                setBaseIngredients(data.ingredients);
+            const recipe = await fetchRecipeById();
+            const ingredients = await fetchRecipeIngredients();
+            const data = {
+                meal: recipe,
+                ingredients: ingredients,
+            };
+
+            setRecipe(data);
+            setBaseIngredients(data.ingredients);
+
+            const favs = await fetchFavorites();
+            const isFavorite = favs?.isFavorite; 
+            setFavorites({ isFavorite });
             } catch (e) {
-                console.error(e);
+            console.error(e);
             }
         };
         loadRecipe();
     }, [id]);
-
   return (
     <>
+      <Header />
       <div className="p-4 mb-20 min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <img src={Logo} alt="Keskon Mange Logo" className="mx-auto mb-8" />
           <h3 className='text-lg font-bold mb-4'>{recipe?.meal.str_meal}</h3>
           <img src={recipe?.meal.str_meal_thumb} alt={recipe?.meal.str_meal} className="mx-auto mb-4 w-78 h-48 object-cover rounded-lg" />
-          <button type="submit">Ajouter aux favoris</button>
-                              
+          
+          {/* on affiche le bouton en fonction de si la recette est déjà dans les favoris ou pas */ }
+        <button type="button" className="mb-4" onClick={toggleFavorite}>
+            <img src={favorites.isFavorite ? HeartFilled : HeartOutlined} alt="Icône favoris" className="inline-block h-6 w-6 mr-2" />
+            {favorites.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+        </button>
+
           <h4 className='text-lg font-bold mt-4 mb-2'>Ingrédients</h4>
-          {/* Quantité ajustée en fonction du nombre de personnes */ }
-          <div>
-              <button type="button" className="mb-4" onClick={decreaseQuantity}>-</button>
-              <span className="mx-2">{nbPersonnes} personnes</span>
-              <button type="button" className="mb-4" onClick={increaseQuantity}>+</button>
+          {/* la quantité est ajustée en fonction du nombre de personnes */ }
+          <div className="mb-4 flex justify-center items-center">
+            <div className="flex items-center gap-2 py-3 px-3 text-white rounded-lg bg-[var(--yellow-color)]">
+                <span type="button" onClick={decreaseQuantity} className="text-lg font-bold leading-none px-2">
+                −
+                </span>
+                <span className="whitespace-nowrap">{nbPersonnes} personnes</span>
+                <span type="button" onClick={increaseQuantity} className="text-lg font-bold leading-none px-2">
+                +
+                </span>
+            </div>
           </div>
 
           <ul className='text-justify list-disc list-inside grid grid-cols-3 gap-4'>

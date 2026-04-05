@@ -1,10 +1,12 @@
 import React from 'react';
 import HomeBlack from '../assets/home_black.svg';
-import RecipesBlack from '../assets/recipes_black.svg';
-import ProfileBlack from '../assets/profile_black.svg';
 import HomeOrange from '../assets/home_orange.svg';
+import SearchBlack from '../assets/search_black.svg';
+import SearchOrange from '../assets/search_orange.svg';
+import RecipesBlack from '../assets/recipes_black.svg';
 import RecipesOrange from '../assets/recipes_orange.svg';
 import ProfileOrange from '../assets/profile_orange.svg';
+import ProfileBlack from '../assets/profile_black.svg';
 import { NavLink } from 'react-router-dom';
 
 export default function Navbar() {
@@ -16,7 +18,7 @@ export default function Navbar() {
             <NavLink to="/home" className="flex flex-col items-center">
               {({ isActive }) => (
                 <>
-                  <img src={isActive ? HomeOrange : HomeBlack} alt="Icône accueil" width={32} />
+                  <img src={isActive ? RecipesOrange : RecipesBlack} alt="Icône accueil" width={32} />
                   <h2 className={isActive ? 'text-orange-500' : 'text-black'}>Accueil</h2>
                 </>
               )}
@@ -27,8 +29,8 @@ export default function Navbar() {
             <NavLink to="/search-meal" className="flex flex-col items-center">
               {({ isActive }) => (
                 <>
-                  <img src={isActive ? RecipesOrange : RecipesBlack} alt="Icône recettes" width={32} />
-                  <h2 className={isActive ? 'text-orange-500' : 'text-black'}>Recettes</h2>
+                  <img src={isActive ? SearchOrange : SearchBlack} alt="Icône recherche" width={32} />
+                  <h2 className={isActive ? 'text-orange-500' : 'text-black'}>Rechercher</h2>
                 </>
               )}
             </NavLink>

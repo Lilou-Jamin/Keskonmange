@@ -7,6 +7,7 @@ import Navbar from '../../components/Navbar.jsx';
 import axios from 'axios';
 import Logo from '../../assets/logo.svg';
 import { useEffect, useState } from 'react';
+import Header from '../../components/Header.jsx';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -33,9 +34,9 @@ export default function Profile() {
 
   return (
     <>
+      <Header />
       <div className="p-4 min-h-screen flex justify-center">
         <div className="text-center">
-          <img src={Logo} alt="Keskon Mange Logo" className="mx-auto mb-8" />
 
           <div className="mb-8 flex flex-row items-center gap-4">
             <img src={IconProfile} alt="Icône de profil" className="" />

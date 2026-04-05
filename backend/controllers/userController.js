@@ -2,6 +2,49 @@ const bcrypt = require('bcrypt');
 const User = require('../models/userModel.js');
 const { createToken } = require('../utils/token');
 
+const addFavorite = async (req, res) => {
+  try {
+    const { id_user, id_meal } = req.body;
+    if (!id_user || !id_meal) {
+      return res.status(400).json({ message: 'ID utilisateur et ID repas requis' });
+    }
+    const result = await User.addToFavorites(id_user, id_meal);
+    res.status(201).json({ message: 'Repas ajouté aux favoris', result });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
+
+const deleteFavorite = async (req, res) => {
+  try {
+    const { id_user, id_meal } = req.body;
+    if (!id_user || !id_meal) {
+      return res.status(400).json({ message: 'ID utilisateur et ID repas requis' });
+    }
+    await User.deleteFavorite(id_user, id_meal);
+    res.status(200).json({ message: 'Repas retiré des favoris' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
+
+/* pour savoir si un repas est déjà dans les favoris */
+const getFavorite = async (req, res) => {
+  try {
+    const { id_user, id_meal } = req.query;
+    if (!id_user || !id_meal) {
+      return res.status(400).json({ message: 'ID utilisateur et ID repas requis' });
+    }
+    const isFavorite = await User.isFavorite(id_user, id_meal);
+    res.status(200).json({ isFavorite });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
+
 const register = async (req, res) => {
   try {
     const { email, username, password } = req.body;
@@ -70,4 +113,7 @@ const login = async (req, res) => {
 module.exports = {
   register,
   login,
+  addFavorite,
+  deleteFavorite,
+  getFavorite,
 };
