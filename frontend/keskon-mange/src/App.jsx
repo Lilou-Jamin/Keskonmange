@@ -14,6 +14,7 @@ import Home from './pages/Home.jsx';
 import SearchMeal from './pages/SearchMeal.jsx';
 import Inventory from './pages/profile/Inventory.jsx';
 import RecipePage from './pages/RecipePage.jsx';
+import MealsByCategory from './pages/MealsByCategory.jsx';
 
 export default function App() {
   // Pour chaque requête vers le backend, on met le token dans le header
@@ -40,6 +41,7 @@ export default function App() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/profile/inventory" element={<Inventory />}></Route>
       <Route path="/meals/:id" element={<RecipePage />} />
+      <Route path="/meals/category/:category" element={<MealsByCategory />} />    
     </Routes>
   );
 }

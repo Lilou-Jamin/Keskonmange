@@ -1,10 +1,13 @@
-import { Link } from 'react-router-dom';
-import { useParams } from "react-router-dom";
-import { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
-import { backendBaseUrl } from '../utils';
 import Navbar from '../components/Navbar';
 import Header from '../components/Header';
+import CategoryPreview from '../components/CategoryPreview';
+import Christmas from '../assets/images/christmas.jpg';
+import Vegetarian from '../assets/images/vegetarian.jpg';
+import TeaTime from '../assets/images/teatime.jpg';
+import Desserts from '../assets/images/desserts.jpg';
+import Starters from '../assets/images/starters.jpg';
+import LowCalories from '../assets/images/lowcalories.webp';
+import Breakfast from '../assets/images/breakfast.jpg';
 
 export default function RecipePage() {
   return (
@@ -20,6 +23,19 @@ export default function RecipePage() {
             placeholder="Rechercher une recette..."
             className="w-full px-4 py-2 focus:outline-none rounded-l-lg"
           />
+        </div>
+
+        <div className="mt-6">
+          <h1 className="font-semibold mb-4">Catégories populaires</h1>
+          <div className="flex flex-wrap gap-4">
+            <CategoryPreview id={4} title="Brunch" category="Breakfast" thumb={Breakfast} />
+            <CategoryPreview id={4} title="Faibles en calories" category="LowCarbs" thumb={LowCalories} />
+            <CategoryPreview id={4} title="Tea time" category="Cake" thumb={TeaTime} />
+            <CategoryPreview id={4} title="Végétarien" category="Vegetarian" thumb={Vegetarian} />
+            <CategoryPreview id={1} title="Noël" category="Christmas" thumb={Christmas} />
+            <CategoryPreview id={2} title="Desserts" category="Dessert" thumb={Desserts} />
+            <CategoryPreview id={3} title="Entrées" category="Starter" thumb={Starters} />
+          </div>
         </div>
       </div>
       <Navbar />

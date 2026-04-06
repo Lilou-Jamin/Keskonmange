@@ -76,6 +76,14 @@ class Meal {
     );
     return result.rows;
   }
+
+  static async getListMealsByCategory(category) {
+    const result = await pool.query(
+      `SELECT * FROM meals WHERE str_tags ILIKE '%' || $1 || '%' OR str_category ILIKE '%' || $1 || '%'`,
+      [category]
+    );
+    return result.rows;
+  }
 }
 
 module.exports = Meal;

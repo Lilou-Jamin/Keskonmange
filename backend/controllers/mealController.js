@@ -169,6 +169,20 @@ const getComments = async (req, res) => {
   }
 };
 
+const getListMealsByCategory = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+  try {    
+    const category = req.params.category;
+    const meals = await Meals.getListMealsByCategory(category);
+    return res.status(200).json(meals);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur serveur.' });
+  }
+};
+
 
 module.exports = {
   getListMeals,
@@ -181,4 +195,5 @@ module.exports = {
   addComment,
   deleteComment,
   getComments,
+  getListMealsByCategory,
 };
