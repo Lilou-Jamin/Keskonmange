@@ -8,6 +8,9 @@ import Navbar from '../components/Navbar';
 import Header from '../components/Header';
 import HeartFilled from '../assets/heart_filled.svg';
 import HeartOutlined from '../assets/heart_outlined.svg';
+import StarFilled from '../assets/star_filled.svg';
+import StarOutlined from '../assets/star_outlined.svg';
+import Trashcan from '../assets/trashcan.svg';
 
 export default function RecipePage() {
     const { id } = useParams();
@@ -16,6 +19,10 @@ export default function RecipePage() {
     const [recipe, setRecipe] = useState(null);
     const [baseIngredients, setBaseIngredients] = useState([]);
     const [favorites, setFavorites] = useState({ isFavorite: false });
+    const [commentaire, setComment] = useState('');
+    const [note, setNote] = useState(0);
+    const [showCommentForm, setShowCommentForm] = useState(false);
+    const [commentaires, setCommentaires] = useState([]);
 
     const fetchRecipeById = async () => {
         const recipe = await axios.get(`${backendBaseUrl}/meals/${id}`);
@@ -56,10 +63,10 @@ export default function RecipePage() {
     const fetchFavorites = async () => {
         try {
             const response = await axios.get(`${backendBaseUrl}/users/getfavorite/${id_user}`, {
-            params: {
-                id_user: JSON.parse(localStorage.getItem('user')).id,
-                id_meal: id,
-            },
+                params: {
+                    id_user: JSON.parse(localStorage.getItem('user')).id,
+                    id_meal: id,
+                },
             });
             return response.data;
         } catch (e) {
@@ -103,27 +110,96 @@ export default function RecipePage() {
         updateQuantities(newNb);
     };
 
-    useEffect(() => {
-        const loadRecipe = async () => {
-            try {
-            const recipe = await fetchRecipeById();
-            const ingredients = await fetchRecipeIngredients();
-            const data = {
-                meal: recipe,
-                ingredients: ingredients,
-            };
+    const addComment = async () => {
+    if (hasAlreadyCommented) {
+        alert('Vous avez déjà écrit un commentaire pour cette recette.');
+        return;
+    }
+    try {
+        await axios.post(`${backendBaseUrl}/meals/${id}/addcomment`, {
+            id_meal: id,
+            id_user: JSON.parse(localStorage.getItem('user')).id,
+            commentaire: commentaire,
+            note: note,
+            date: new Date(),
+        });
 
-            setRecipe(data);
-            setBaseIngredients(data.ingredients);
+        setComment('');
+        setNote(0);
 
-            const favs = await fetchFavorites();
-            const isFavorite = favs?.isFavorite; 
-            setFavorites({ isFavorite });
-            } catch (e) {
+        await loadCommentaires();
+        setShowCommentForm(false);
+    } catch (e) {
+        console.error(e);
+        alert("Erreur lors de l'ajout du commentaire");
+    }
+    };
+
+    const deleteComment = async (commentId) => {
+        try {
+            await axios.delete(`${backendBaseUrl}/meals/${id}/deletecomment`, {
+                data: {
+                    id_user: JSON.parse(localStorage.getItem('user')).id,
+                    id_meal: id,
+                    id_comment: commentId,
+                },
+            }); 
+            await loadCommentaires();
+        } catch (e) {
             console.error(e);
-            }
+            alert('Erreur lors de la suppression du commentaire');
+        }
+    };
+
+    const fetchCommentaires = async () => {
+        try {
+            const response = await axios.get(`${backendBaseUrl}/meals/${id}/getcomments`);
+            return response.data;
+        } catch (e) {
+            console.error(e);
+            alert('Erreur lors du chargement des commentaires');
+            return [];
+        }
+    };
+
+    const hasAlreadyCommented = commentaires.some(
+        (commentaire) => commentaire.id_user === id_user
+    );
+
+    const loadCommentaires = async () => {
+        const commentairesData = await fetchCommentaires();
+        setCommentaires(commentairesData || []);
+    };
+
+    const toggleCommentForm = () => {
+        setShowCommentForm((prev) => !prev);
+    };
+
+    useEffect(() => {
+    const loadRecipe = async () => {
+        try {
+        const recipe = await fetchRecipeById();
+        const ingredients = await fetchRecipeIngredients();
+
+        const data = {
+            meal: recipe,
+            ingredients,
         };
-        loadRecipe();
+
+        setRecipe(data);
+        setBaseIngredients(data.ingredients);
+
+        const favs = await fetchFavorites();
+        const isFavorite = !!favs?.isFavorite;
+        setFavorites({ isFavorite });
+
+        await loadCommentaires();
+        } catch (e) {
+        console.error(e);
+        }
+    };
+
+    loadRecipe();
     }, [id]);
   return (
     <>
@@ -139,10 +215,10 @@ export default function RecipePage() {
             {favorites.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
         </button>
 
-          <h4 className='text-lg font-bold mt-4 mb-2'>Ingrédients</h4>
+          <h4 className='text-left text-lg font-bold mt-4 mb-2'>Ingrédients</h4>
           {/* la quantité est ajustée en fonction du nombre de personnes */ }
           <div className="mb-4 flex justify-center items-center">
-            <div className="flex items-center gap-2 py-3 px-3 text-white rounded-lg bg-[var(--yellow-color)]">
+            <div className="flex items-center gap-2 m-2 py-2 px-3 text-white rounded-lg bg-(--yellow-color)">
                 <span type="button" onClick={decreaseQuantity} className="text-lg font-bold leading-none px-2">
                 −
                 </span>
@@ -167,7 +243,7 @@ export default function RecipePage() {
             ))}
           </ul>
 
-          <h4 className='text-lg font-bold mt-4 mb-2'>Étapes de préparation</h4>
+          <h4 className='text-left text-lg font-bold mt-12 mb-2'>Étapes de préparation</h4>
           {/* split sur les sauts de ligne pour l'affichage en liste */ }
           <ul className='text-justify list-decimal list-inside'>
             {recipe?.meal?.str_instructions.split('\n').map((step, index) => (
@@ -175,8 +251,89 @@ export default function RecipePage() {
             ))}
           </ul>
 
-          <h4 className='text-lg font-bold mt-4 mb-2'>C'est terminé ? Quand as-tu pensé ?</h4>
-          <button type="submit">Laisser un avis</button>
+          <h4 className='text-lg font-bold mt-12'>C'est terminé ? Donne ton avis !</h4>
+            {hasAlreadyCommented ? (
+                <p className="text-sm text-gray-600">
+                    Vous avez déjà laissé un commentaire pour cette recette
+                </p>
+            ) : (
+            <button type="button" onClick={toggleCommentForm} className="px-4 py-2 bg-(--yellow-color) text-white rounded-lg mb-4">
+                {showCommentForm ? 'Annuler' : 'Ajouter un commentaire'}
+            </button>
+            )}
+
+          <div className="p-4" style={{ display: showCommentForm ? 'block' : 'none' }}>
+                <span className="underline text-left flex font-bold mb-2">{recipe?.meal.str_meal}</span>
+                <input type="hidden" name="note" value={note} />
+                <div className="flex items-center mb-2">
+                    <span className="mr-2">Ta note :</span>
+                    {[...Array(5)].map((_, i) => (
+                    <img
+                        key={i}
+                        src={i < note ? StarFilled : StarOutlined}
+                        alt={i < note ? 'Étoile pleine' : 'Étoile vide'}
+                        className="h-6 w-6 cursor-pointer"
+                        onClick={() => setNote(i + 1)}
+                    />
+                    ))}
+                </div>
+                <textarea
+                    name="commentaire"
+                    className="w-full h-24 p-2 border border-gray-300 rounded-lg resize-none"
+                    placeholder="Écris ton commentaire ici..."
+                    value={commentaire}
+                    onChange={(e) => setComment(e.target.value)}
+                />
+                <button type="submit" onClick={addComment} className="px-4 bg-(--yellow-color) text-white rounded-lg">
+                    Envoyer
+                </button>
+          </div>
+
+          <div>
+            <h4 className='text-left text-lg font-bold mt-4 mb-2'>Commentaires</h4>
+            {commentaires.length === 0 ? (
+            <p className='text-gray-600 text-sm'>Aucun commentaire pour le moment</p>
+            ) : (
+            <ul className="space-y-4">
+                {commentaires.map((commentaire, index) => (
+                <li key={index} className="border border-gray-300 p-4 rounded-lg">
+                    <div className="flex items-center mb-2">
+                      <div className="h-8 w-8 rounded-full border-(--yellow-color) border-2 text-(--yellow-color) flex items-center justify-center mr-2">
+                          {commentaire.username?.charAt(0).toUpperCase()}
+                      </div>
+                      <div className='flex-rows'>
+                        <span className="flex font-bold">{commentaire.username}</span>
+                        {/* on affiche la note sous forme d'étoile */ }
+                        <div className="flex items-center">
+                        {[...Array(5)].map((_, i) => (
+                            <img
+                                    key={i}
+                                    src={i < commentaire.note ? StarFilled : StarOutlined}
+                                    alt={i < commentaire.note ? 'Étoile pleine' : 'Étoile vide'}
+                                    className="h-4 w-4"
+                            />
+                        ))}
+                        <span className='text-sm text-gray-600 ml-1'>{commentaire.note}/5</span>
+                        </div> 
+                      </div>
+                    </div>
+
+                    <p className="text-left">{commentaire.commentaire}</p>
+
+                    <div className='flex items-center justify-between mt-2'>
+                        <span className="text-sm text-gray-600">{new Date(commentaire.created_at).toLocaleDateString()}</span>
+                        {/* on affiche le bouton de suppression seulement si le commentaire appartient à l'utilisateur connecté */ }
+                        {commentaire.id_user === JSON.parse(localStorage.getItem('user')).id && (
+                        <span onClick={() => deleteComment(commentaire.id_comment)} className="">
+                            <img src={Trashcan} alt="Icône supprimer" className="h-5 w-5" />
+                        </span>
+                        )}   
+                    </div>
+                </li>
+                ))}
+            </ul>
+            )}
+          </div>
         </div>
       </div>
       <Navbar />

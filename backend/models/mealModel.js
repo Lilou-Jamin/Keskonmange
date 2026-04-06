@@ -47,6 +47,35 @@ class Meal {
     );
     return result.rows[0];
   }
+
+  static async addComment({ id_user, id_meal, note, commentaire, date }) {
+    const result = await pool.query(
+      `INSERT INTO commentaires_meal (id_user, id_meal, note, commentaire, created_at)
+       VALUES ($1, $2, $3, $4, $5)
+        RETURNING *`,
+      [id_user, id_meal, note, commentaire, date]
+    );
+    return result.rows[0];
+  }
+
+  static async deleteComment({ id_user, id_meal }) {
+    await pool.query(
+      `DELETE FROM commentaires_meal
+       WHERE id_user = $1 AND id_meal = $2`,
+      [id_user, id_meal]
+    );
+  }
+
+  static async getComments(id_meal) {
+    const result = await pool.query(
+      `SELECT cm.id_user, cm.id_meal, cm.note, cm.commentaire, cm.created_at, u.username
+       FROM commentaires_meal cm
+       JOIN users u ON cm.id_user = u.id
+       WHERE cm.id_meal = $1`,
+      [id_meal]
+    );
+    return result.rows;
+  }
 }
 
 module.exports = Meal;

@@ -12,7 +12,7 @@ import { NavLink } from 'react-router-dom';
 export default function Navbar() {
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 p-2 bg-(--beige-color) flex justify-center items-center border-t-2 border-(--grey-color)">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 p-2 bg-(--beige-color) flex justify-center items-center border-t-2 border-gray-200">
         <ul className="flex w-full justify-around">
           <li>
             <NavLink to="/home" className="flex flex-col items-center">

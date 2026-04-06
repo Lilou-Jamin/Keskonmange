@@ -121,6 +121,55 @@ const addMeal = async (req, res) => {
   }
 };
 
+const addComment = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+  try {    
+    const { id_user, id_meal, note, commentaire, date } = req.body;
+    if (!id_user || !id_meal || !commentaire || !date) {
+      return res.status(400).json({ message: 'Tous les champs sont requis.' });
+    } 
+    const newComment = await Meals.addComment({ id_user, id_meal, note, commentaire, date });
+    return res.status(201).json(newComment);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur serveur.' });
+  }
+};
+
+const deleteComment = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+  try {    
+    const { id_user, id_meal } = req.body;
+    if (!id_user || !id_meal) {
+      return res.status(400).json({ message: 'ID utilisateur et ID repas requis.' });
+    }
+    await Meals.deleteComment({ id_user, id_meal });
+    return res.status(200).json({ message: 'Commentaire supprimé.' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur serveur.' });
+  }
+};
+
+const getComments = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+  try {    
+    const id_meal = req.params.id;
+    const comments = await Meals.getComments(id_meal);
+    return res.status(200).json(comments);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur serveur.' });
+  }
+};
+
+
 module.exports = {
   getListMeals,
   getListOf10RandomMeals,
@@ -129,4 +178,7 @@ module.exports = {
   getMealById,
   getMealIngredients,
   addMeal,
+  addComment,
+  deleteComment,
+  getComments,
 };

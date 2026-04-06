@@ -22,7 +22,7 @@ export default function RecipePreview({ id, title, thumb }) {
               alt="Icône temps de préparation"
               className="mr-2 h-4 w-4"
             />
-            <span>Temps de préparation</span>
+            <span>Temps de prep</span>
           </div>
         </div>
       </Link>
