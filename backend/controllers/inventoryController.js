@@ -19,6 +19,7 @@ const { verifyToken } = require('../utils/token');
 //      id: int
 //      id_user: string (uuid)
 //      ingredient: (ingredient)
+//      is_countable: boolean
 //      qty: int
 //   }
 // ]

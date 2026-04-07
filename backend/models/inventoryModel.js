@@ -15,7 +15,8 @@ class Inventory {
     let result;
     if (joined) {
       result = await pool.query(
-        'SELECT * FROM lien_users_ingredients JOIN ingredients USING(id_ingredient) WHERE id_user = $1',
+        // An ingredient is only countable when it doesn't have any measures in the measures join table
+        'SELECT *, CASE WHEN id_ingredient NOT IN (SELECT id_ingredient FROM lien_ingredients_measures) THEN FALSE ELSE TRUE END AS is_countable FROM lien_users_ingredients JOIN ingredients USING(id_ingredient) WHERE id_user = $1',
         [id]
       );
     } else {
@@ -51,9 +52,10 @@ class Inventory {
   static async updateInventory(idUser, idIngredient, qty = 1) {
     const query = `
             UPDATE lien_users_ingredients
-            SET qty = $1;
+            SET qty = $1
+            WHERE id_user = $2 AND id_ingredient = $3;
         `;
-    const values = [qty];
+    const values = [qty, idUser, idIngredient];
     await pool.query(query, values);
   }
 
