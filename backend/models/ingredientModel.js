@@ -11,6 +11,11 @@ class Ingredient {
     return result.rows[0];
   }
 
+  static async search(query) {
+    const result = await pool.query('SELECT * FROM ingredients WHERE str_ingredient ILIKE $1', [`%${query}%`]);
+    return result.rows;
+  }
+
   //   static async create({ title, ingredients, instructions, time, image }) {
   //     const result = await pool.query(
   //       `INSERT INTO meals (title, ingredients, instructions, time, image)

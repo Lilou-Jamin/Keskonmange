@@ -25,6 +25,23 @@ class Inventory {
     return result.rows;
   }
 
+  static async findByUserAndIngredientId(userId, ingredientId, joined = false) {
+    let result;
+    if (joined) {
+      result = await pool.query(
+        // An ingredient is only countable when it doesn't have any measures in the measures join table
+        'SELECT *, CASE WHEN id_ingredient NOT IN (SELECT id_ingredient FROM lien_ingredients_measures) THEN FALSE ELSE TRUE END AS is_countable FROM lien_users_ingredients JOIN ingredients USING(id_ingredient) WHERE id_user = $1 AND id_ingredient = $2',
+        [userId, ingredientId]
+      );
+    } else {
+      result = await pool.query('SELECT * FROM lien_users_ingredients WHERE id_user = $1 AND id_ingredient = $2', [
+        userId,
+        ingredientId,
+      ]);
+    }
+    return result.rows[0];
+  }
+
   static async findIngredientQuantityForUserId(userId, ingredientId) {
     const result = await pool.query('SELECT * FROM lien_users_ingredients WHERE id_user = $1 AND id_ingredient = $2', [
       userId,

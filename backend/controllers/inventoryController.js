@@ -57,7 +57,13 @@ const getUserInventory = async (req, res) => {
 // GET /:ingredientId
 // params:
 // - :ingredientId l'ID de l'ingrédient a chercher
-// returns: quantity: int
+// returns: {
+//    id: int
+//    id_user: string (uuid)
+//    ingredient: (ingredient)
+//    is_countable: boolean
+//    qty: int
+// }
 // throws:
 // - 401: authentification invalide
 // - 404: ingrédient non trouvé dans l'inventaire de l'utilisateur
@@ -69,14 +75,19 @@ const getUserInventoryIngredient = async (req, res) => {
     return res.status(401).json({ message: 'Invalid Authentication Token' });
   }
 
-  try {
-    const inventory = await Inventory.findIngredientQuantityForUserId(token.id, req.params.ingredientId);
+  let joined = false;
+  if (req.query.joined === '1') {
+    joined = true;
+  }
 
-    if (!inventory) {
+  try {
+    const ingredient = await Inventory.findByUserAndIngredientId(token.id, req.params.ingredientId, joined);
+
+    if (!ingredient) {
       return res.status(404).json({ message: "Ingrédient non trouvé dans l'inventaire de l'utilisateur." });
     }
 
-    return res.json(inventory.qty);
+    return res.json(ingredient);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Erreur serveur.' });
