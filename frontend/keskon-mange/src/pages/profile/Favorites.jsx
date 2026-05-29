@@ -37,8 +37,11 @@ export default function Favorites() {
         <>
             <Header />
 
-            <div className="p-4 min-h-screen">
-                <h1 className="mb-4">Mes recettes favorites</h1>
+            <div className="p-4 mb-20 min-h-screen">
+                <div className='flex flex-rows items-center gap-2 mb-4'>
+                    <h1 className="text-xl font-bold">Mes recettes favorites</h1>
+                    <span className="text-sm text-gray-600 flex mt-1">({favorites.length})</span>
+                </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {favorites.length > 0 ? (
