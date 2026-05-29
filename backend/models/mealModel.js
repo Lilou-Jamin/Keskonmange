@@ -11,7 +11,6 @@ class Meal {
     const query = "SELECT * FROM meals WHERE str_meal ILIKE $1";
     const values = [`%${name}%`];
     const result = await pool.query(query, values);
-    console.log("rows", result.rows);
     return result.rows;
   }
 
