@@ -49,7 +49,6 @@ const getFavorite = async (req, res) => {
 const getFavorites = async (req, res) => {
   try {
     const { id_user } = req.query;
-    console.log('id_user', id_user)
     if (!id_user) {
       return res.status(400).json({ message: 'ID utilisateur requis' });
     }
