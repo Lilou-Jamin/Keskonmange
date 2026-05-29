@@ -50,7 +50,7 @@ export default function Profile() {
             </div>
           </Link>
 
-          <Link to="/profile/inventory" className="link">
+          <Link to="/profile/favorites" className="link">
             <div className="mb-4 border-2 border-(--light-grey-color) rounded-lg p-3 flex flex-row items-center gap-4">
               <img src={HeartIcon}></img>
               <h2> Mes recettes favorites </h2>

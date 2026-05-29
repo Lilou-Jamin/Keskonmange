@@ -21,6 +21,19 @@ class User {
     const result = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
     return result.rows[0];
   }
+
+  static async getFavorites(id_user) {
+    const query = `
+      SELECT meals.*
+      FROM meals
+      JOIN favorites_user ON meals.id_meal = favorites_user.id_meal
+      WHERE favorites_user.id_user = $1
+      ORDER BY meals.str_meal ASC
+    `;
+    const values = [id_user];
+    const result = await pool.query(query, values);
+    return result.rows;
+  }
   
   static async addToFavorites(id_user, id_meal) {
     const query = `

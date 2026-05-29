@@ -45,6 +45,22 @@ const getFavorite = async (req, res) => {
   }
 };
 
+/* renvoie toutes les recettes favorites d'un user */
+const getFavorites = async (req, res) => {
+  try {
+    const { id_user } = req.query;
+    console.log('id_user', id_user)
+    if (!id_user) {
+      return res.status(400).json({ message: 'ID utilisateur requis' });
+    }
+    const result = await User.getFavorites(id_user);
+    res.status(200).json({ favorites: result });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
+
 const register = async (req, res) => {
   try {
     const { email, username, password } = req.body;
@@ -116,4 +132,5 @@ module.exports = {
   addFavorite,
   deleteFavorite,
   getFavorite,
+  getFavorites,
 };
