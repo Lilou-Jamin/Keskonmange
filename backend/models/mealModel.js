@@ -6,6 +6,15 @@ class Meal {
     return result.rows;
   }
 
+  // pour la recherche de recettes par via barre de recherche
+  static async findByName(name) {
+    const query = "SELECT * FROM meals WHERE str_meal ILIKE $1";
+    const values = [`%${name}%`];
+    const result = await pool.query(query, values);
+    console.log("rows", result.rows);
+    return result.rows;
+  }
+
   static async find10RandomMeals() {
     const result = await pool.query('SELECT * FROM meals ORDER BY RANDOM() LIMIT 10;');
     return result.rows;

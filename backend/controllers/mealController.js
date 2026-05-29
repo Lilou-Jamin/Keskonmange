@@ -183,6 +183,23 @@ const getListMealsByCategory = async (req, res) => {
   }
 };
 
+const searchMealsByName = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+  console.log('searchMealsByName controller')
+  try {    
+    const { name } = req.query;
+    if (!name) {
+      return res.status(400).json({ message: "Nom de recette requis" });
+    }
+    const meals = await Meals.findByName(name);
+    console.log('meals found:', meals);
+    return res.status(200).json(meals);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur", error });
+  }
+};
 
 module.exports = {
   getListMeals,
@@ -196,4 +213,5 @@ module.exports = {
   deleteComment,
   getComments,
   getListMealsByCategory,
+  searchMealsByName,
 };
