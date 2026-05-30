@@ -3,8 +3,6 @@ const { getListMeals, getListOf10RandomMeals, getListOf10RandomDesserts, getList
 const router = express.Router();
 
 router.get('/search', searchMealsByName);
-router.get('/', getListMeals);
-router.get('/:id', getMealById);
 router.get('/randommeals', getListOf10RandomMeals);
 router.get('/randomdesserts', getListOf10RandomDesserts);
 router.get('/randomvegetarians', getListOf10RandomVegetarians);
@@ -14,5 +12,8 @@ router.post('/:id/addcomment', addComment);
 router.delete('/:id/deletecomment', deleteComment);
 router.get('/:id/getcomments', getComments);
 router.get('/category/:category', getListMealsByCategory);
+
+router.get('/', getListMeals);
+router.get('/:id', getMealById);
 
 module.exports = router;
