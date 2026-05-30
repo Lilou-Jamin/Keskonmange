@@ -8,6 +8,7 @@ import axios from 'axios';
 import Logo from '../../assets/logo.svg';
 import { useEffect, useState } from 'react';
 import Header from '../../components/Header.jsx';
+import ThumbUpIcon from '../../assets/thumb_up.svg';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -61,6 +62,13 @@ export default function Profile() {
             <div className="mb-6 border-2 border-(--light-grey-color) rounded-lg p-3 flex flex-row items-center gap-4">
               <img src={CartIcon}></img>
               <h2> Mes ingrédients à racheter </h2>
+            </div>
+          </Link>
+
+          <Link to="/profile/preferences" className="link">
+            <div className="mb-6 border-2 border-(--light-grey-color) rounded-lg p-3 flex flex-row items-center gap-4">
+              <img src={ThumbUpIcon} width={24}></img>
+              <h2> Mes préférences </h2>
             </div>
           </Link>
 

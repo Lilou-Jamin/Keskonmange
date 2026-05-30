@@ -60,6 +60,37 @@ const getFavorites = async (req, res) => {
   }
 };
 
+/* renvoie les préférences d'un user */
+const getPreferences = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: 'ID utilisateur requis' });
+    }
+    const result = await User.getPreferences(id);
+    res.status(200).json({ preferences: result });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
+
+/* met à jour les préférences d'un user */
+const updatePreferences = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { diets, allergies } = req.body;
+    if (!id || !Array.isArray(diets) || !Array.isArray(allergies)) {
+      return res.status(400).json({ message: 'ID utilisateur et préférences requis' });
+    }
+    await User.updatePreferences(id, diets || [], allergies || []);    
+    res.status(200).json({ message: 'Préférences mises à jour' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
+
 const register = async (req, res) => {
   try {
     const { email, username, password } = req.body;
@@ -132,4 +163,6 @@ module.exports = {
   deleteFavorite,
   getFavorite,
   getFavorites,
+  getPreferences,
+  updatePreferences,
 };

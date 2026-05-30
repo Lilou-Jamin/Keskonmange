@@ -24,9 +24,11 @@ const getListIngredients = async (req, res) => {
 
   try {
     if (req.query.search) {
+      console.log('Search query:', req.query.search);
       const ingredients = await Ingredients.search(req.query.search);
       return res.status(200).json(ingredients);
     } else {
+      console.log('ça passe dans le MAUVAIS HIHIHIHIHH:');
       const ingredients = await Ingredients.find();
       return res.status(200).json(ingredients);
     }
@@ -41,7 +43,6 @@ const getIngredientById = async (req, res) => {
     return res.status(401).json({ message: 'Invalid Authentication Token' });
   }
 
-  console.log('Ingredient ID:', req.params.id);
   try {
     const ingredient = await Ingredients.findById(req.params.id);
 

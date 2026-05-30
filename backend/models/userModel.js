@@ -63,6 +63,42 @@ class User {
     const result = await pool.query(query, values);
     return result.rowCount > 0;
   }
+
+  static async getPreferences(id_user) {
+    const query = `
+      SELECT * FROM preferences_user
+      WHERE id_user = $1
+    `;
+    const values = [id_user];
+    const result = await pool.query(query, values);
+    return result.rows;
+  }
+
+  static async updatePreferences(id_user, diets, allergies) {
+    console.log('updatePreferencesMODEL - id_user:', id_user);
+    console.log('updatePreferencesMODEL - diets:', diets);
+    console.log('updatePreferencesMODEL - allergies:', allergies);
+    const query = `
+      INSERT INTO preferences_user (
+        id_user,
+        diets,
+        allergies
+      )
+      VALUES ($1, $2, $3)
+      ON CONFLICT (id_user)
+      DO UPDATE SET
+        diets = EXCLUDED.diets,
+        allergies = EXCLUDED.allergies
+    `;
+
+    const values = [
+      id_user,
+      diets,
+      allergies,
+    ];
+
+    await pool.query(query, values);
+  }
 }
 
 module.exports = User;

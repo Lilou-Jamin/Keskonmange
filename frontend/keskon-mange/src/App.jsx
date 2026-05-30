@@ -14,6 +14,7 @@ import Home from './pages/Home.jsx';
 import SearchMeal from './pages/SearchMeal.jsx';
 import Inventory from './pages/profile/Inventory.jsx';
 import Favorites from './pages/profile/Favorites.jsx';
+import Preferences from './pages/profile/Preferences.jsx';
 import RecipePage from './pages/RecipePage.jsx';
 import MealsByCategory from './pages/MealsByCategory.jsx';
 
@@ -42,6 +43,7 @@ export default function App() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/profile/inventory" element={<Inventory />}></Route>
       <Route path="/profile/favorites" element={<Favorites />}></Route>
+      <Route path="/profile/preferences" element={<Preferences />}></Route>
       <Route path="/meals/:id" element={<RecipePage />} />
       <Route path="/meals/category/:category" element={<MealsByCategory />} />    
     </Routes>
