@@ -8,7 +8,7 @@ class Meal {
 
   // pour la recherche de recettes par via barre de recherche
   static async findByName(name) {
-    const query = "SELECT * FROM meals WHERE str_meal ILIKE $1";
+    const query = 'SELECT * FROM meals WHERE str_meal ILIKE $1';
     const values = [`%${name}%`];
     const result = await pool.query(query, values);
     return result.rows;
@@ -25,13 +25,15 @@ class Meal {
   }
 
   static async find10RandomVegetarians() {
-    const result = await pool.query(`SELECT * FROM meals WHERE str_category = 'Vegetarian' ORDER BY RANDOM() LIMIT 10;`);
+    const result = await pool.query(
+      `SELECT * FROM meals WHERE str_category = 'Vegetarian' ORDER BY RANDOM() LIMIT 10;`
+    );
     return result.rows;
   }
 
   static async findById(id) {
     const result = await pool.query('SELECT * FROM meals WHERE id_meal = $1', [id]);
-    return result.rows[0]; 
+    return result.rows[0];
   }
 
   static async findMealIngredients(id) {
@@ -42,10 +44,24 @@ class Meal {
         JOIN ingredients i ON lim.id_ingredient = i.id_ingredient
         JOIN measures m ON lim.id_measure = m.id_measure
         WHERE lmi.id_meal = $1;
-      `, [id]);
-    return result.rows; 
+      `,
+      [id]
+    );
+    return result.rows;
   }
-  
+
+  // Returns only the ingredients IDs, their quantity and their link ID given an array of meals
+  static async findMealsIngredientsOptimized(ids) {
+    const result = await pool.query(
+      `SELECT *
+        FROM lien_meals_ingredients lmi
+        WHERE lmi.id_meal = ANY($1::int[]);
+      `,
+      [ids]
+    );
+    return result.rows;
+  }
+
   static async create({ title, ingredients, instructions, time, image }) {
     const result = await pool.query(
       `INSERT INTO meals (title, ingredients, instructions, time, image)

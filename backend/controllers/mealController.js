@@ -1,4 +1,5 @@
 const Meals = require('../models/mealModel');
+const Inventory = require('../models/inventoryModel');
 const { verifyToken } = require('../utils/token');
 
 const getListMeals = async (req, res) => {
@@ -184,20 +185,73 @@ const getListMealsByCategory = async (req, res) => {
 };
 
 const searchMealsByName = async (req, res) => {
-  if (!verifyToken(req)) {
+  const token = verifyToken(req);
+  if (!token) {
     return res.status(401).json({ message: 'Invalid Authentication Token' });
   }
-  console.log('searchMealsByName controller')
-  try {    
-    const { name } = req.query;
+
+  console.log('searchMealsByName controller');
+  try {
+    const { name, userInventory } = req.query;
     if (!name) {
       return res.status(400).json({ message: "Nom de recette requis" });
     }
-    const meals = await Meals.findByName(name);
+
+    let meals;
+    if (userInventory !== '1') {
+      meals = await Meals.findByName(name);
+    } else {
+      meals = await Meals.findByName(name);
+      console.log(meals);
+      const ingredients = await Meals.findMealsIngredientsOptimized(meals.map((meal) => meal.id_meal));
+
+      // Transform individual "lien_meals_ingredients" rows into a map like this: { <id meal>: [{ <id ingredient>: <qty> }] }
+      const ingredientsMap = ingredients.reduce((map, curr) => {
+        if (map.get(curr.id_meal) === undefined) {
+          map.set(curr.id_meal, []);
+        }
+
+        map.get(curr.id_meal).push({ id_ingredient: curr.id_ingredient, qty: curr.quantity });
+        return map;
+      }, new Map());
+      const userInventory = await Inventory.findByUserId(token.id);
+      
+      // Transform individual "lien_users_ingredients" rows into a map like this: { <id ingredient>: <qty> }
+      const userInventoryMap = userInventory.reduce((map, curr) => {
+        map.set(curr.id_ingredient, curr.qty);
+        return map;
+      }, new Map());
+
+      const filteredMeals = [];
+      for (const meal of meals) {
+        let pushMeal = true;
+        const mealIngredients = ingredientsMap.get(meal.id_meal);
+        if (mealIngredients === undefined) {
+          console.log(`WARNING: Meal '${meal.id_meal}' does not have any ingredients. Skipping user ingredients check.`);
+          break;
+        }
+
+        for (const mealIngredient of mealIngredients) {
+          const userIngredient = userInventoryMap.get(mealIngredient.id_ingredient);
+          if (userIngredient === undefined || userIngredient < mealIngredient.qty) {
+            pushMeal = false;
+            break;
+          }
+        }
+
+        if (pushMeal) {
+          filteredMeals.push(meal);
+        }
+      }
+
+      meals = filteredMeals;
+    }
+
     console.log('meals found:', meals);
     return res.status(200).json(meals);
   } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error });
+    console.error(error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 };
 

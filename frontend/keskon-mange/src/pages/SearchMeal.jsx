@@ -8,7 +8,7 @@ import Desserts from '../assets/images/desserts.jpg';
 import Starters from '../assets/images/starters.jpg';
 import LowCalories from '../assets/images/lowcalories.webp';
 import Breakfast from '../assets/images/breakfast.jpg';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { backendBaseUrl } from '../utils';
 import axios from 'axios';
 import RecipePreview from '../components/RecipePreview.jsx';
@@ -16,19 +16,27 @@ import RecipePreview from '../components/RecipePreview.jsx';
 export default function SearchMeal() {
   const [search, setSearch] = useState("");
   const [meals, setMeals] = useState([]);
+  const [userInventory, setUserInventory] = useState(false);
 
-  const handleSearch = async (e) => {
-    const value = e.target.value;
+  const handleSearch = async () => {
+    const value = document.getElementById('search-input').value;
     setSearch(value);
 
     if (!value.trim()) {
       setMeals([]);
       return;
     }
-    const response = await axios.get(`${backendBaseUrl}/meals/search?name=${value}`);
+    const response = await axios.get(`${backendBaseUrl}/meals/search?name=${value}&userInventory=${userInventory ? '1' : '0'}`);
     const data = response.data;
     setMeals(data);
   };
+
+  useEffect(() => {
+    const callHandleSearch = async () => {
+      await handleSearch();
+    }
+    callHandleSearch()
+  }, [userInventory])
 
   return (
     <>
@@ -37,13 +45,28 @@ export default function SearchMeal() {
         <h1>Rechercher</h1>
 
         <p className="flex justify-center text-justify">
-          Tu peux rechercher une recette ou sélectionner une catégorie de recettes
-          pour trouver ton prochain repas.
+          Tu peux rechercher une recette ou sélectionner une catégorie de recettes pour trouver ton prochain repas.
         </p>
+
+        <div>
+          <input
+            className="ml-1"
+            id="user-inventory"
+            type="checkbox"
+            checked={userInventory}
+            onChange={async (e) => {
+              setUserInventory(e.target.checked);
+            }}
+          />
+          <label className="pl-2" htmlFor="user-inventory">
+            Filtrer les recettes selon mes ingrédients
+          </label>
+        </div>
 
         <div className="flex items-center border-2 border-gray-300 rounded-lg mt-4">
           <input
             type="text"
+            id="search-input"
             value={search}
             onChange={handleSearch}
             placeholder="Rechercher une recette..."
@@ -53,12 +76,7 @@ export default function SearchMeal() {
 
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
           {meals.map((meal) => (
-            <RecipePreview
-              key={meal.id_meal}
-              id={meal.id_meal}
-              title={meal.str_meal}
-              thumb={meal.str_meal_thumb}
-            />
+            <RecipePreview key={meal.id_meal} id={meal.id_meal} title={meal.str_meal} thumb={meal.str_meal_thumb} />
           ))}
         </div>
 
