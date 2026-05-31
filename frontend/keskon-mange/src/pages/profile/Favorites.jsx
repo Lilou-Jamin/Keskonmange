@@ -51,6 +51,7 @@ export default function Favorites() {
                                 id={meal.id_meal}
                                 title={meal.str_meal}
                                 thumb={meal.str_meal_thumb}
+                                time={meal.prep_time}
                             />
                         ))
                     ) : (

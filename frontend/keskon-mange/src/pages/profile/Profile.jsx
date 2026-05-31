@@ -58,13 +58,6 @@ export default function Profile() {
             </div>
           </Link>
 
-          <Link to="/profile/inventory" className="link">
-            <div className="mb-4 border-2 border-(--light-grey-color) rounded-lg p-3 flex flex-row items-center gap-4">
-              <img src={CartIcon}></img>
-              <h2> Mes ingrédients à racheter </h2>
-            </div>
-          </Link>
-
           <Link to="/profile/preferences" className="link">
             <div className="mb-6 border-2 border-(--light-grey-color) rounded-lg p-3 flex flex-row items-center gap-4">
               <img src={ThumbUpIcon} width={24}></img>

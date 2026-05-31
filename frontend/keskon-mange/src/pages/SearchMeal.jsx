@@ -77,7 +77,7 @@ export default function SearchMeal() {
 
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
           {meals.map((meal) => (
-            <RecipePreview key={meal.id_meal} id={meal.id_meal} title={meal.str_meal} thumb={meal.str_meal_thumb} />
+            <RecipePreview key={meal.id_meal} id={meal.id_meal} title={meal.str_meal} thumb={meal.str_meal_thumb} time={meal.prep_time} />
           ))}
         </div>
 

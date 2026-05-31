@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import TimeIcon from '../assets/time.svg';
 
-export default function RecipePreview({ id, title, thumb }) {
+export default function RecipePreview({ id, title, thumb, time }) {
   return (
-    <div className="h-64 w-40 sm:w-48 shrink-0 overflow-hidden rounded-xl bg-white shadow-md">
+    <div className="h-60 w-40 sm:w-48 shrink-0 overflow-hidden rounded-xl bg-white shadow-md">
       <Link to={`/meals/${id}`} className="block h-full">
         <div className="h-32 w-full">
           <img
@@ -13,7 +13,7 @@ export default function RecipePreview({ id, title, thumb }) {
           />
         </div>
 
-        <div className="flex h-32 flex-col justify-between p-3">
+        <div className="flex h-32 flex-col p-3">
           <p className="line-clamp-2 font-semibold text-black">{title}</p>
 
           <div className="flex items-center text-sm text-gray-600">
@@ -22,7 +22,7 @@ export default function RecipePreview({ id, title, thumb }) {
               alt="Icône temps de préparation"
               className="mr-2 h-4 w-4"
             />
-            <span>Temps de prep</span>
+            <span>{time} min</span>
           </div>
         </div>
       </Link>
