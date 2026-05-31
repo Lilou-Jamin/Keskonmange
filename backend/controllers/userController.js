@@ -79,15 +79,20 @@ const getPreferences = async (req, res) => {
 const updatePreferences = async (req, res) => {
   try {
     const { id } = req.params;
-    const { diets, allergies } = req.body;
-    if (!id || !Array.isArray(diets) || !Array.isArray(allergies)) {
-      return res.status(400).json({ message: 'ID utilisateur et préférences requis' });
+    const { diet, allergies } = req.body;
+
+    if (!id || typeof diet !== "string" || !Array.isArray(allergies)) {
+      return res.status(400).json({
+        message: "ID utilisateur, régime et allergies requis",
+      });
     }
-    await User.updatePreferences(id, diets || [], allergies || []);    
-    res.status(200).json({ message: 'Préférences mises à jour' });
+
+    await User.updatePreferences(id, diet, allergies);
+
+    res.status(200).json({ message: "Préférences mises à jour" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Erreur serveur' });
+    res.status(500).json({ message: "Erreur serveur" });
   }
 };
 

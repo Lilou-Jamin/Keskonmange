@@ -2,14 +2,43 @@ const { pool } = require('../config/connectionDb');
 
 class User {
   static async createUser({ email, username, passwordHash }) {
-    const query = `
+    const client = await pool.connect();
+
+    try {
+      // on démarre une transaction comme ça on s'assure que les deux requêtes passent ou aucune ne passe
+      await client.query('BEGIN');
+
+      // on crée l'utilisateur
+      const userResult = await client.query(
+        `
         INSERT INTO users (email, username, password_hash)
         VALUES ($1, $2, $3)
-        RETURNING id, email, username, created_at;
-    `;
-    const values = [email, username, passwordHash];
-    const result = await pool.query(query, values);
-    return result.rows[0];
+        RETURNING id, email, username, created_at
+        `,
+        [email, username, passwordHash]
+      );
+
+      const user = userResult.rows[0];
+
+      // on met par défaut le régime alimentaire de l'utilisateur à "omnivore"
+      await client.query(
+        `
+        INSERT INTO preferences_user (id_user, diet)
+        VALUES ($1, $2)
+        `,
+        [user.id, 'omnivore']
+      );
+      // si on arrive ici c'est que les deux requêtes ont réussies, on peut valider la transaction
+      await client.query('COMMIT');
+      return user;
+
+    } catch (error) {
+      // en cas d'erreur on annule la transaction pour éviter d avoir des données incohérente
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 
   static async findUserByEmail(email) {
@@ -74,29 +103,17 @@ class User {
     return result.rows;
   }
 
-  static async updatePreferences(id_user, diets, allergies) {
-    console.log('updatePreferencesMODEL - id_user:', id_user);
-    console.log('updatePreferencesMODEL - diets:', diets);
-    console.log('updatePreferencesMODEL - allergies:', allergies);
+  static async updatePreferences(id_user, diet, allergies) {
     const query = `
-      INSERT INTO preferences_user (
-        id_user,
-        diets,
-        allergies
-      )
+      INSERT INTO preferences_user (id_user, diet, allergies)
       VALUES ($1, $2, $3)
       ON CONFLICT (id_user)
       DO UPDATE SET
-        diets = EXCLUDED.diets,
+        diet = EXCLUDED.diet,
         allergies = EXCLUDED.allergies
     `;
 
-    const values = [
-      id_user,
-      diets,
-      allergies,
-    ];
-
+    const values = [id_user, diet, allergies];
     await pool.query(query, values);
   }
 }
