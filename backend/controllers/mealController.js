@@ -10,7 +10,6 @@ const getListMeals = async (req, res) => {
 
   try {
     const meals = await Meals.find();
-    console.log('allo:', meals);
     return res.status(200).json(meals);
   } catch (error) {
     console.error(error);
@@ -191,7 +190,6 @@ const searchMealsByName = async (req, res) => {
     return res.status(401).json({ message: 'Invalid Authentication Token' });
   }
 
-  console.log('searchMealsByName controller');
   try {
     const { name, userInventory, id_user } = req.query;
     const preferences = await User.getPreferences(id_user);
@@ -231,7 +229,7 @@ const searchMealsByName = async (req, res) => {
         let pushMeal = true;
         const mealIngredients = ingredientsMap.get(meal.id_meal);
         if (mealIngredients === undefined) {
-          console.log(`WARNING: Meal '${meal.id_meal}' does not have any ingredients. Skipping user ingredients check.`);
+          console.log(`Attention le plat '${meal.id_meal}' ne contient aucun ingrédient. Ignorer la vérification des ingrédients par l'utilisateur`);
           break;
         }
 
@@ -250,8 +248,6 @@ const searchMealsByName = async (req, res) => {
 
       meals = filteredMeals;
     }
-
-    console.log('meals found:', meals);
     return res.status(200).json(meals);
   } catch (error) {
     console.error(error);

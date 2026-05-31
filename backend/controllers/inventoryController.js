@@ -1,33 +1,7 @@
 const Inventory = require('../models/inventoryModel');
 const { verifyToken } = require('../utils/token');
 
-// retourne l'inventaire complet de l'utilisateur authentifié
-// GET /
-// OU
-// GET /?joined=1
-// returns: [
-//   {
-//      id: int
-//      id_user: string (uuid)
-//      id_ingredient: int
-//      qty: int
-//   }
-// ]
-// OU
-// returns: [
-//   {
-//      id: int
-//      id_user: string (uuid)
-//      ingredient: (ingredient)
-//      is_countable: boolean
-//      qty: int
-//   }
-// ]
-// throws:
-// - 401: authentification invalide
-// - 404: inventaire de l'utilisateur vide
-// - 500: erreur serveur
-//
+// retourne l'inventaire complet de l'utilisateur connecté
 const getUserInventory = async (req, res) => {
   let joined = false;
   if (req.query.joined === '1') {
@@ -53,22 +27,8 @@ const getUserInventory = async (req, res) => {
   }
 };
 
-// retourne la quantité d'un ingrédient dans l'inventaire de l'utilisateur authentifié
-// GET /:ingredientId
-// params:
-// - :ingredientId l'ID de l'ingrédient a chercher
-// returns: {
-//    id: int
-//    id_user: string (uuid)
-//    ingredient: (ingredient)
-//    is_countable: boolean
-//    qty: int
-// }
-// throws:
-// - 401: authentification invalide
-// - 404: ingrédient non trouvé dans l'inventaire de l'utilisateur
-// - 500: erreur serveur
-//
+
+// retourne la quantité d'un ingrédient dans l'inventaire de l'utilisateur connecté
 const getUserInventoryIngredient = async (req, res) => {
   const token = verifyToken(req);
   if (!token) {
@@ -94,19 +54,8 @@ const getUserInventoryIngredient = async (req, res) => {
   }
 };
 
-// ajout OU suppression (quantity < 0) d'un ingrédient dans l'inventaire d'un utilisateur authentifié
-// POST /
-// body:
-// {
-//    idIngredient: int
-//    quantity: int
-// }
-// returns: 200 - OK
-// throws:
-// - 401: authentification invalide
-// - 400: requête invalide
-// - 500: erreur serveur
-//
+// ajoute ou supprime une quantité d'un ingrédient dans l'inventaire de l'utilisateur connecté
+// si la quantité totale devient 0 ou négative on supprime l'ingrédient de l'inventaire
 const addToOrRemoveFromInventory = async (req, res) => {
   const token = verifyToken(req);
   if (!token) {

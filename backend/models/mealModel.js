@@ -86,7 +86,7 @@ class Meal {
     return result.rows;
   }
 
-  // Returns only the ingredients IDs, their quantity and their link ID given an array of meals
+  // renvoie seulement les IDs des ingrédients leur quantité et leur ID de lien donné un tableau de repas
   static async findMealsIngredientsOptimized(ids) {
     const result = await pool.query(
       `SELECT *
