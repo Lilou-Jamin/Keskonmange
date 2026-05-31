@@ -17,6 +17,7 @@ export default function SearchMeal() {
   const [search, setSearch] = useState("");
   const [meals, setMeals] = useState([]);
   const [userInventory, setUserInventory] = useState(false);
+  const id_user = JSON.parse(localStorage.getItem('user'))?.id;
 
   const handleSearch = async () => {
     const value = document.getElementById('search-input').value;
@@ -26,7 +27,7 @@ export default function SearchMeal() {
       setMeals([]);
       return;
     }
-    const response = await axios.get(`${backendBaseUrl}/meals/search?name=${value}&userInventory=${userInventory ? '1' : '0'}`);
+    const response = await axios.get(`${backendBaseUrl}/meals/search?name=${value}&userInventory=${userInventory ? '1' : '0'}&id_user=${id_user}`);
     const data = response.data;
     setMeals(data);
   };

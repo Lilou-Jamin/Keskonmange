@@ -1,6 +1,7 @@
 const Meals = require('../models/mealModel');
 const Inventory = require('../models/inventoryModel');
 const { verifyToken } = require('../utils/token');
+const User = require('../models/userModel');
 
 const getListMeals = async (req, res) => {
   if (!verifyToken(req)) {
@@ -192,17 +193,20 @@ const searchMealsByName = async (req, res) => {
 
   console.log('searchMealsByName controller');
   try {
-    const { name, userInventory } = req.query;
+    const { name, userInventory, id_user } = req.query;
+    const preferences = await User.getPreferences(id_user);
+    const diet = preferences[0]?.diet || "omnivore";
+    const allergies = preferences[0]?.allergies || [];
     if (!name) {
       return res.status(400).json({ message: "Nom de recette requis" });
     }
-
+    
     let meals;
     if (userInventory !== '1') {
-      meals = await Meals.findByName(name);
+      meals = await Meals.findByName(name, diet, allergies);
     } else {
-      meals = await Meals.findByName(name);
-      console.log(meals);
+      meals = await Meals.findByName(name, diet, allergies);
+
       const ingredients = await Meals.findMealsIngredientsOptimized(meals.map((meal) => meal.id_meal));
 
       // Transform individual "lien_meals_ingredients" rows into a map like this: { <id meal>: [{ <id ingredient>: <qty> }] }
