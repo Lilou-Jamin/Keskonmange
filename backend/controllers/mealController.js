@@ -126,11 +126,11 @@ const addComment = async (req, res) => {
   if (!verifyToken(req)) {
     return res.status(401).json({ message: 'Invalid Authentication Token' });
   }
-  try {    
+  try {
     const { id_user, id_meal, note, commentaire, date } = req.body;
     if (!id_user || !id_meal || !commentaire || !date) {
       return res.status(400).json({ message: 'Tous les champs sont requis.' });
-    } 
+    }
     const newComment = await Meals.addComment({ id_user, id_meal, note, commentaire, date });
     return res.status(201).json(newComment);
   } catch (error) {
@@ -143,7 +143,7 @@ const deleteComment = async (req, res) => {
   if (!verifyToken(req)) {
     return res.status(401).json({ message: 'Invalid Authentication Token' });
   }
-  try {    
+  try {
     const { id_user, id_meal } = req.body;
     if (!id_user || !id_meal) {
       return res.status(400).json({ message: 'ID utilisateur et ID repas requis.' });
@@ -160,7 +160,7 @@ const getComments = async (req, res) => {
   if (!verifyToken(req)) {
     return res.status(401).json({ message: 'Invalid Authentication Token' });
   }
-  try {    
+  try {
     const id_meal = req.params.id;
     const comments = await Meals.getComments(id_meal);
     return res.status(200).json(comments);
@@ -174,7 +174,7 @@ const getListMealsByCategory = async (req, res) => {
   if (!verifyToken(req)) {
     return res.status(401).json({ message: 'Invalid Authentication Token' });
   }
-  try {    
+  try {
     const category = req.params.category;
     const meals = await Meals.getListMealsByCategory(category);
     return res.status(200).json(meals);
@@ -193,17 +193,14 @@ const searchMealsByName = async (req, res) => {
   try {
     const { name, userInventory, id_user } = req.query;
     const preferences = await User.getPreferences(id_user);
-    const diet = preferences[0]?.diet || "omnivore";
+    const diet = preferences[0]?.diet || 'omnivore';
     const allergies = preferences[0]?.allergies || [];
-    if (!name) {
-      return res.status(400).json({ message: "Nom de recette requis" });
-    }
-    
+
     let meals;
     if (userInventory !== '1') {
-      meals = await Meals.findByName(name, diet, allergies);
+      meals = await Meals.findByName(name ? name : '', diet, allergies);
     } else {
-      meals = await Meals.findByName(name, diet, allergies);
+      meals = await Meals.findByName(name ? name : '', diet, allergies);
 
       const ingredients = await Meals.findMealsIngredientsOptimized(meals.map((meal) => meal.id_meal));
 
@@ -217,7 +214,7 @@ const searchMealsByName = async (req, res) => {
         return map;
       }, new Map());
       const userInventory = await Inventory.findByUserId(token.id);
-      
+
       // Transform individual "lien_users_ingredients" rows into a map like this: { <id ingredient>: <qty> }
       const userInventoryMap = userInventory.reduce((map, curr) => {
         map.set(curr.id_ingredient, curr.qty);
@@ -226,11 +223,19 @@ const searchMealsByName = async (req, res) => {
 
       const filteredMeals = [];
       for (const meal of meals) {
+        // FIXME: Meal with ID 0 is broken (no title, thumbnail...)
+        if (meal.id_meal == 0) {
+          continue;
+        }
+
         let pushMeal = true;
         const mealIngredients = ingredientsMap.get(meal.id_meal);
         if (mealIngredients === undefined) {
-          console.log(`Attention le plat '${meal.id_meal}' ne contient aucun ingrédient. Ignorer la vérification des ingrédients par l'utilisateur`);
-          break;
+          console.log(
+            `Attention le plat '${meal.id_meal}' ne contient aucun ingrédient. Ignorer la vérification des ingrédients par l'utilisateur`
+          );
+          filteredMeals.push(meal);
+          continue;
         }
 
         for (const mealIngredient of mealIngredients) {
@@ -251,7 +256,7 @@ const searchMealsByName = async (req, res) => {
     return res.status(200).json(meals);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Erreur serveur" });
+    res.status(500).json({ message: 'Erreur serveur' });
   }
 };
 

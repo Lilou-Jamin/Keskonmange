@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Header from '../../components/Header.jsx';
 import SearchIcon from '../../assets/search_black.svg';
 import TrashcanIcon from '../../assets/trashcan.svg';
+import { useNavigate } from 'react-router-dom';
 
 function PopupEdit({ ingredient, setShowPopup }) {
   const [newQuantity, setNewQuantity] = useState(ingredient.qty);
@@ -37,7 +38,7 @@ function PopupEdit({ ingredient, setShowPopup }) {
   };
 
   return (
-    <div className="w-full h-full bg-black/50 absolute z-10 flex">
+    <div className="w-full h-full bg-black/50 fixed z-10 flex">
       <div className="self-center text-center w-full">
         <div className="mx-8 py-4 bg-(--light-grey-color) rounded-[3rem]">
           <div className="mx-auto">
@@ -119,7 +120,7 @@ function PopupAdd({ setShowAddPopup, setShowEditPopup, setSelectedIngredient, in
   };
 
   return (
-    <div className="w-full h-full bg-black/50 absolute z-10 flex">
+    <div className="w-full h-full bg-black/50 fixed z-10 flex">
       <div className="self-center text-center w-full">
         <div className="mx-8 py-4 bg-(--light-grey-color) rounded-[3rem]">
           <div className="py-2 px-2 mt-2 mx-4 rounded-[1rem] bg-(--beige-color)">
@@ -180,6 +181,7 @@ function PopupAdd({ setShowAddPopup, setShowEditPopup, setSelectedIngredient, in
 }
 
 export default function Inventory() {
+  const navigate = useNavigate();
   const [inventory, setInventory] = useState(null);
   const [selectedIngredient, setSelectedIngredient] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
@@ -257,6 +259,11 @@ export default function Inventory() {
                 ))}
               </div>
             </div>
+            {inventory && inventory.length !== 0 && (
+              <button className="mb-[6rem]!" onClick={() => navigate('/profile/inventory/recipes')}>
+                Voir mes recettes
+              </button>
+            )}
           </div>
         </div>
       </div>
