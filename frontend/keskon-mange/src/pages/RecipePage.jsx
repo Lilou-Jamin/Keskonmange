@@ -8,8 +8,9 @@ import Navbar from '../components/Navbar';
 import Header from '../components/Header';
 import HeartFilled from '../assets/heart_filled.svg';
 import HeartOutlined from '../assets/heart_outlined.svg';
-import StarFilled from '../assets/star_filled.svg';
-import StarOutlined from '../assets/star_outlined.svg';
+import StarFilled from '../assets/star_fullfilled.svg';
+import StarHalf from '../assets/star_half.svg';
+import StarOutlined from '../assets/star_lined.svg';
 import Trashcan from '../assets/trashcan.svg';
 
 function PopupDone({ setShowDoneRecipeModal, nbPersonnes, mealId }) {
@@ -48,7 +49,9 @@ export default function RecipePage() {
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [showDoneRecipeModal, setShowDoneRecipeModal] = useState(false);
   const [commentaires, setCommentaires] = useState([]);
-
+  const [moyenneNote, setMoyenneNote] = useState(0);
+  const [nombreAvis, setNombreAvis] = useState(0);
+  
   const fetchRecipeById = async () => {
     const recipe = await axios.get(`${backendBaseUrl}/meals/${id}`);
     return recipe.data;
@@ -193,10 +196,31 @@ export default function RecipePage() {
 
   const hasAlreadyCommented = commentaires.some((commentaire) => commentaire.id_user === id_user);
 
-  const loadCommentaires = async () => {
-    const commentairesData = await fetchCommentaires();
-    setCommentaires(commentairesData || []);
-  };
+    const loadCommentaires = async () => {
+        const commentairesData = await fetchCommentaires();
+        const avis = commentairesData || [];
+
+        setCommentaires(avis);
+        setNombreAvis(avis.length);
+
+        if (avis.length === 0) {
+            setMoyenneNote(0);
+            return;
+        }
+
+        const moyenne = avis.reduce((sum, c) => sum + Number(c.note), 0) / avis.length;
+        setMoyenneNote(moyenne);
+    };
+
+    const getStars = (note) => {
+        const safeNote = Math.min(Math.max(note || 0, 0), 5);
+
+        return [...Array(5)].map((_, i) => {
+            if (safeNote >= i + 1) return "full";
+            if (safeNote >= i + 0.5) return "half";
+            return "empty";
+        });
+    };
 
   const toggleCommentForm = () => {
     setShowCommentForm((prev) => !prev);
@@ -242,6 +266,35 @@ export default function RecipePage() {
             alt={recipe?.meal.str_meal}
             className="mx-auto mb-4 w-78 h-48 object-cover rounded-lg"
           />
+        {/* on affiche la note moyenne sous forme d'étoiles et le nombre total d'avis */ }
+        <div className="flex items-center justify-center mb-4">
+            {getStars(moyenneNote).map((type, i) => (
+                <img
+                key={i}
+                src={
+                    type === "full"
+                    ? StarFilled
+                    : type === "half"
+                    ? StarHalf
+                    : StarOutlined
+                }
+                alt={
+                    type === "full"
+                    ? "Étoile pleine"
+                    : type === "half"
+                    ? "Demi-étoile"
+                    : "Étoile vide"
+                }
+                className="h-5 w-5"
+                />
+            ))}
+
+            <span className="ml-2 mt-1 text-sm text-gray-600">
+                {nombreAvis === 0
+                ? "0 avis"
+                : `${moyenneNote.toFixed(1)} / 5 (${nombreAvis} ${nombreAvis === 1 ? "avis" : "avis"})`}
+            </span>
+        </div>
 
           {/* on affiche le bouton en fonction de si la recette est déjà dans les favoris ou pas */}
           <button type="button" className="mb-4" onClick={toggleFavorite}>
