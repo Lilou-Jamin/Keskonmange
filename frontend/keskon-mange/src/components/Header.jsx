@@ -12,15 +12,15 @@ export default function Header() {
         <ul className="flex w-full justify-between items-center">
           <li>
             {/* si l'user a déjà un historique de nav on revient à la page précédente sinon accueil */}
-            <button onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/home')} className="flex flex-col items-center p-0 transparent-button">
+            <div onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/home')} className="flex flex-col items-center p-0 transparent-button">
                 <img src={ChevronOrange} alt="Revenir à la page précédente" width={32} />
-            </button>
+            </div>
           </li>
 
           <li>
-            <button onClick={() => navigate('/home')} className="flex flex-col items-center transparent-button">
+            <div onClick={() => navigate('/home')} className="flex flex-col items-center transparent-button">
                 <img src={Logo} alt="Keskon Mange Logo" className="" />
-            </button>
+            </div>
           </li>
         </ul>
       </nav>
