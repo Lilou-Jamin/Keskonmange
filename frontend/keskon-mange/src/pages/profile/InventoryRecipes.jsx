@@ -50,6 +50,8 @@ export default function InventoryRecipes() {
               title={meal.str_meal}
               thumb={meal.str_meal_thumb}
               time={meal.prep_time}
+              avg_note={meal.avg_note}
+              nb_comments={meal.nb_comments}
             />
           ))}
         </div>

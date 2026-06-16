@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
 import TimeIcon from '../assets/time.svg';
+import StarFilled from '../assets/star_fullfilled.svg';
+import StarHalf from '../assets/star_half.svg';
+import StarOutlined from '../assets/star_lined.svg';
+import RatingStars from '../components/RatingStars';
 
-export default function RecipePreview({ id, title, thumb, time }) {
+export default function RecipePreview({ id, title, thumb, time, avg_note = 0, nb_comments = 0 }) {
   return (
     <div className="h-60 w-40 sm:w-48 shrink-0 overflow-hidden rounded-xl bg-white shadow-md">
       <Link to={`/meals/${id}`} className="block h-full">
@@ -14,7 +18,14 @@ export default function RecipePreview({ id, title, thumb, time }) {
         </div>
 
         <div className="flex h-32 flex-col p-3">
-          <p className="line-clamp-2 font-semibold text-black">{title}</p>
+          <p className="line-clamp-2 font-semibold text-black">
+            {title}
+          </p>
+
+          <RatingStars
+            avgNote={avg_note}
+            nbComments={nb_comments}
+          />
 
           <div className="flex items-center text-sm text-gray-600">
             <img

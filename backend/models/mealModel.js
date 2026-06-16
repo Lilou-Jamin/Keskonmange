@@ -9,9 +9,14 @@ class Meal {
   // pour la recherche de recettes par via barre de recherche
   static async findByName(name, diet, allergies) {
     let query = `
-      SELECT m.*
+      SELECT m.*, 
+      COALESCE(AVG(c.note), 0) AS avg_note,
+      COUNT(c.note) AS nb_comments
       FROM meals m
+      LEFT JOIN commentaires_meal c 
+      ON c.id_meal = m.id_meal
       WHERE m.str_meal ILIKE $1
+      GROUP BY m.id_meal  
     `;
 
     const values = [`%${name}%`];
@@ -51,24 +56,64 @@ class Meal {
   }
 
   static async find10RandomMeals() {
-    const result = await pool.query('SELECT * FROM meals ORDER BY RANDOM() LIMIT 10;');
+    const result = await pool.query(`
+      SELECT m.*, 
+      COALESCE(AVG(c.note), 0) AS avg_note,
+      COUNT(c.note) AS nb_comments
+      FROM meals m
+      LEFT JOIN commentaires_meal c 
+      ON c.id_meal = m.id_meal
+      GROUP BY m.id_meal          
+      ORDER BY RANDOM() 
+      LIMIT 10;
+      `);
+      console.log('allo ?', result.rows)
     return result.rows;
   }
 
   static async find10RandomDesserts() {
-    const result = await pool.query(`SELECT * FROM meals WHERE str_category = 'Dessert' ORDER BY RANDOM() LIMIT 10;`);
+    const result = await pool.query(`
+      SELECT m.*, 
+      COALESCE(AVG(c.note), 0) AS avg_note,
+      COUNT(c.note) AS nb_comments
+      FROM meals m
+      LEFT JOIN commentaires_meal c 
+      ON c.id_meal = m.id_meal
+      WHERE str_category = 'Dessert'
+      GROUP BY m.id_meal          
+      ORDER BY RANDOM() 
+      LIMIT 10;
+    `);
     return result.rows;
   }
 
   static async find10RandomVegetarians() {
-    const result = await pool.query(
-      `SELECT * FROM meals WHERE str_category = 'Vegetarian' ORDER BY RANDOM() LIMIT 10;`
-    );
+    const result = await pool.query(`
+      SELECT m.*, 
+      COALESCE(AVG(c.note), 0) AS avg_note,
+      COUNT(c.note) AS nb_comments
+      FROM meals m
+      LEFT JOIN commentaires_meal c 
+      ON c.id_meal = m.id_meal
+      WHERE str_category = 'Vegetarian'
+      GROUP BY m.id_meal          
+      ORDER BY RANDOM() 
+      LIMIT 10;
+    `);
     return result.rows;
   }
 
   static async findById(id) {
-    const result = await pool.query('SELECT * FROM meals WHERE id_meal = $1', [id]);
+    const result = await pool.query(`
+      SELECT m.*,
+      COALESCE(AVG(c.note), 0) AS avg_note,
+      COUNT(c.note) AS nb_comments
+      FROM meals m
+      LEFT JOIN commentaires_meal c 
+      ON c.id_meal = m.id_meal
+      WHERE m.id_meal = $1
+      GROUP BY m.id_meal    
+      `, [id]);
     return result.rows[0];
   }
 
@@ -138,8 +183,16 @@ class Meal {
   }
 
   static async getListMealsByCategory(category) {
-    const result = await pool.query(
-      `SELECT * FROM meals WHERE str_tags ILIKE '%' || $1 || '%' OR str_category ILIKE '%' || $1 || '%'`,
+    const result = await pool.query(`
+        SELECT m.*, 
+        COALESCE(AVG(c.note), 0) AS avg_note,
+        COUNT(c.note) AS nb_comments
+        FROM meals m
+        LEFT JOIN commentaires_meal c 
+        ON c.id_meal = m.id_meal
+        WHERE str_tags ILIKE '%' || $1 || '%' OR str_category ILIKE '%' || $1 || '%'
+        GROUP BY m.id_meal    
+      `,
       [category]
     );
     return result.rows;

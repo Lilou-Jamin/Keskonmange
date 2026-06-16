@@ -12,6 +12,7 @@ import StarFilled from '../assets/star_fullfilled.svg';
 import StarHalf from '../assets/star_half.svg';
 import StarOutlined from '../assets/star_lined.svg';
 import Trashcan from '../assets/trashcan.svg';
+import RatingStars from '../components/RatingStars';
 
 function PopupDone({ setShowDoneRecipeModal, nbPersonnes, mealId }) {
   const handleDoneRecipe = async () => {
@@ -46,11 +47,11 @@ export default function RecipePage() {
   const [favorites, setFavorites] = useState({ isFavorite: false });
   const [commentaire, setComment] = useState('');
   const [note, setNote] = useState(0);
+  const [avgNote, setAvgNote] = useState(0);
+  const [nbComments, setNbComments] = useState(0);
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [showDoneRecipeModal, setShowDoneRecipeModal] = useState(false);
   const [commentaires, setCommentaires] = useState([]);
-  const [moyenneNote, setMoyenneNote] = useState(0);
-  const [nombreAvis, setNombreAvis] = useState(0);
   
   const fetchRecipeById = async () => {
     const recipe = await axios.get(`${backendBaseUrl}/meals/${id}`);
@@ -195,30 +196,63 @@ export default function RecipePage() {
   };
 
   const hasAlreadyCommented = commentaires.some((commentaire) => commentaire.id_user === id_user);
+  
+  // on recharge le cache des carousels 24h pour faire apparaître la note moyenne
+  const updateMealRatingInCache = (idMeal, avg_note, nb_comments) => {
+    const keys = [
+      'carousel-random-meals',
+      'carousel-random-desserts',
+      'carousel-random-vegetarians',
+    ];
 
-    const loadCommentaires = async () => {
-        const commentairesData = await fetchCommentaires();
-        const avis = commentairesData || [];
+    keys.forEach((key) => {
+      const cachedValue = localStorage.getItem(key);
+      if (!cachedValue) return;
 
-        setCommentaires(avis);
-        setNombreAvis(avis.length);
+      const parsed = JSON.parse(cachedValue);
 
-        if (avis.length === 0) {
-            setMoyenneNote(0);
-            return;
-        }
+      if (!Array.isArray(parsed.data)) return;
 
-        const moyenne = avis.reduce((sum, c) => sum + Number(c.note), 0) / avis.length;
-        setMoyenneNote(moyenne);
-    };
+      const updatedData = parsed.data.map((meal) =>
+        Number(meal.id_meal) === Number(idMeal)
+          ? { ...meal, avg_note, nb_comments }
+          : meal
+      );
+
+      localStorage.setItem(
+        key,
+        JSON.stringify({...parsed, data: updatedData,})
+      );
+    });
+  };
+
+  const loadCommentaires = async () => {
+    const commentairesData = await fetchCommentaires();
+    const avis = commentairesData || [];
+
+    setCommentaires(avis);
+
+    const nb = avis.length;
+
+    const avg =
+      nb > 0
+        ? avis.reduce((sum, commentaire) => sum + Number(commentaire.note), 0) / nb
+        : 0;
+
+    setAvgNote(avg);
+    setNbComments(nb);
+
+    updateMealRatingInCache(id, avg, nb);
+    window.dispatchEvent(new Event('ratings-updated'));
+  };
 
     const getStars = (note) => {
         const safeNote = Math.min(Math.max(note || 0, 0), 5);
 
         return [...Array(5)].map((_, i) => {
-            if (safeNote >= i + 1) return "full";
-            if (safeNote >= i + 0.5) return "half";
-            return "empty";
+        if (safeNote >= i + 1) return "full";
+        if (safeNote >= i + 0.5) return "half";
+        return "empty";
         });
     };
 
@@ -260,41 +294,21 @@ export default function RecipePage() {
       <Header />
       <div className="p-4 mb-20 min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h3 className="text-lg font-bold mb-4">{recipe?.meal.str_meal}</h3>
+          <h3 className="text-lg font-bold">{recipe?.meal.str_meal}</h3>
+          <div className="flex justify-center mb-4 ">
+            {/* on affiche la note moyenne sous forme d'étoiles et le nombre total d'avis */ }
+            <RatingStars
+              avgNote={avgNote}
+              nbComments={nbComments}
+              showValue={true}
+              size="h-5 w-5"
+            />
+          </div>
           <img
             src={recipe?.meal.str_meal_thumb}
             alt={recipe?.meal.str_meal}
             className="mx-auto mb-4 w-78 h-48 object-cover rounded-lg"
           />
-        {/* on affiche la note moyenne sous forme d'étoiles et le nombre total d'avis */ }
-        <div className="flex items-center justify-center mb-4">
-            {getStars(moyenneNote).map((type, i) => (
-                <img
-                key={i}
-                src={
-                    type === "full"
-                    ? StarFilled
-                    : type === "half"
-                    ? StarHalf
-                    : StarOutlined
-                }
-                alt={
-                    type === "full"
-                    ? "Étoile pleine"
-                    : type === "half"
-                    ? "Demi-étoile"
-                    : "Étoile vide"
-                }
-                className="h-5 w-5"
-                />
-            ))}
-
-            <span className="ml-2 mt-1 text-sm text-gray-600">
-                {nombreAvis === 0
-                ? "0 avis"
-                : `${moyenneNote.toFixed(1)} / 5 (${nombreAvis} ${nombreAvis === 1 ? "avis" : "avis"})`}
-            </span>
-        </div>
 
           {/* on affiche le bouton en fonction de si la recette est déjà dans les favoris ou pas */}
           <button type="button" className="mb-4" onClick={toggleFavorite}>

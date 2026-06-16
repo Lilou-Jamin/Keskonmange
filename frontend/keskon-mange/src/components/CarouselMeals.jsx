@@ -21,10 +21,24 @@ export const fetch10RandomVegetarian = async () => {
   return res.data;
 };
 
-// La fonction passée en props détermine les plats qu'on affiche dans le carousel
 export default function CarouselMeals({ fetchFunction, title, storageKey }) {
   const [randomMeals, setRandomMeals] = useState([]);
   const carouselRef = useRef(null);
+
+  const loadFromCache = () => {
+    const cachedValue = localStorage.getItem(storageKey);
+
+    if (!cachedValue) return false;
+
+    const parsed = JSON.parse(cachedValue);
+
+    if (Array.isArray(parsed.data)) {
+      setRandomMeals(parsed.data);
+      return true;
+    }
+
+    return false;
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -59,25 +73,44 @@ export default function CarouselMeals({ fetchFunction, title, storageKey }) {
     load();
   }, [fetchFunction, storageKey]);
 
+  useEffect(() => {
+    const handleRatingsUpdated = () => {
+      loadFromCache();
+    };
+
+    window.addEventListener('ratings-updated', handleRatingsUpdated);
+
+    return () => {
+      window.removeEventListener('ratings-updated', handleRatingsUpdated);
+    };
+  }, [storageKey]);
+
   const scrollLeft = () => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: -320, behavior: 'smooth' });
-    }
+    carouselRef.current?.scrollBy({ left: -320, behavior: 'smooth' });
   };
 
   const scrollRight = () => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: 320, behavior: 'smooth' });
-    }
+    carouselRef.current?.scrollBy({ left: 320, behavior: 'smooth' });
   };
-return (
+
+  return (
     <section className="mt-4 w-full max-w-full overflow-hidden">
-      <div className="flex items-center justify-between mb-2">
+      <div className="mb-2 flex items-center justify-between">
         <h1 className="text-xl font-bold">{title}</h1>
 
-        <div className="flex gap-2 ">
-            <img src={ChevronLeft} className="h-6" alt="Flèche orange" onClick={scrollLeft}/>
-            <img src={ChevronRight} className="h-6" alt="Flèche orange" onClick={scrollRight}/>
+        <div className="flex gap-2">
+          <img
+            src={ChevronLeft}
+            className="h-6 cursor-pointer"
+            alt="Flèche gauche"
+            onClick={scrollLeft}
+          />
+          <img
+            src={ChevronRight}
+            className="h-6 cursor-pointer"
+            alt="Flèche droite"
+            onClick={scrollRight}
+          />
         </div>
       </div>
 
@@ -92,6 +125,8 @@ return (
               title={meal.str_meal}
               thumb={meal.str_meal_thumb}
               time={meal.prep_time}
+              avg_note={meal.avg_note}
+              nb_comments={meal.nb_comments}
             />
           </div>
         ))}

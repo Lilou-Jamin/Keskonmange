@@ -53,10 +53,14 @@ class User {
 
   static async getFavorites(id_user) {
     const query = `
-      SELECT meals.*
+      SELECT meals.*, 
+      COALESCE(AVG(c.note), 0) AS avg_note,
+      COUNT(c.note) AS nb_comments
       FROM meals
       JOIN favorites_user ON meals.id_meal = favorites_user.id_meal
+      LEFT JOIN commentaires_meal c ON c.id_meal = meals.id_meal
       WHERE favorites_user.id_user = $1
+      GROUP BY meals.id_meal
       ORDER BY meals.str_meal ASC
     `;
     const values = [id_user];

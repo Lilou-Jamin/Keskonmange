@@ -39,12 +39,15 @@ export default function MealsByCategory() {
             {mealsByCategory.map((meal) => (
             
             <div key={meal.id_meal} className="shrink-0">
-                <RecipePreview
+              <RecipePreview
+                key={meal.id_meal}
                 id={meal.id_meal}
                 title={meal.str_meal}
                 thumb={meal.str_meal_thumb}
                 time={meal.prep_time}
-                />
+                avg_note={meal.avg_note}
+                nb_comments={meal.nb_comments}
+              />
             </div>
 
             ))}
