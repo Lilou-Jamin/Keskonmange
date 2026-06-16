@@ -14,7 +14,7 @@ export default function Home() {
           <img src={Logo} alt="Keskon Mange Logo" className="" />
           <div>
             <h2 className="mt-4">Besoin d'idées de repas ?</h2>
-            <p>Importe tes ingrédients et découvre des recettes personnalisées en quelques secondes !</p>
+            <p className='text-justify'>Importe tes ingrédients et découvre des recettes personnalisées en quelques secondes !</p>
             <div className="flex flex-row items-center gap-2">
               <img src={ArrowOrange} alt="Flèche orange" />
               <Link to="/search-meal" className="link-orange">

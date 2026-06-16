@@ -49,9 +49,9 @@ export default function SearchMeal() {
           Tu peux rechercher une recette ou sélectionner une catégorie de recettes pour trouver ton prochain repas.
         </p>
 
-        <div>
+        <div className='flex items-center mt-8'>
           <input
-            className="ml-1"
+            className="h-4 w-4 cursor-pointer accent-(--yellow-color)"
             id="user-inventory"
             type="checkbox"
             checked={userInventory}

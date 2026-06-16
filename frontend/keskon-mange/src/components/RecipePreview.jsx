@@ -18,9 +18,9 @@ export default function RecipePreview({ id, title, thumb, time, avg_note = 0, nb
         </div>
 
         <div className="flex h-32 flex-col p-3">
-          <p className="line-clamp-2 font-semibold text-black">
+          <span className="line-clamp-2 font-semibold text-black">
             {title}
-          </p>
+          </span>
 
           <RatingStars
             avgNote={avg_note}
