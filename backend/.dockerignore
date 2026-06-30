@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Local environment secrets and overrides (Crucial for security!)
+.env
+.env.*
+
+# Linters, formatters, and IDE configs
+.eslintcache
+.prettierignore
+.prettierrc
+eslint.config.mjs
+
+# Version control and documentation
+.git
+.gitignore
+.github/
+README.md
