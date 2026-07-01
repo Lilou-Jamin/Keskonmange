@@ -1,9 +1,21 @@
 const Ingredients = require('../models/ingredientModel');
+const { verifyToken } = require('../utils/token');
 
+// retourne la liste de tous les ingrédients ou bien d'une recherche
+// search est optionnel, si il est présent on fait une recherche d'ingrédients qui contiennent la chaîne de caractère search sinon on retourne tous les ingrédients
 const getListIngredients = async (req, res) => {
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+
   try {
-    const ingredients = await Ingredients.find();
-    return res.status(200).json(ingredients);
+    if (req.query.search) {
+      const ingredients = await Ingredients.search(req.query.search);
+      return res.status(200).json(ingredients);
+    } else {
+      const ingredients = await Ingredients.find();
+      return res.status(200).json(ingredients);
+    }
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Erreur serveur.' });
@@ -11,7 +23,10 @@ const getListIngredients = async (req, res) => {
 };
 
 const getIngredientById = async (req, res) => {
-  console.log('Ingredient ID:', req.params.id);
+  if (!verifyToken(req)) {
+    return res.status(401).json({ message: 'Invalid Authentication Token' });
+  }
+
   try {
     const ingredient = await Ingredients.findById(req.params.id);
 
@@ -27,6 +42,10 @@ const getIngredientById = async (req, res) => {
 };
 
 // const addIngredient = async (req, res) => {
+//   if (!verifyToken(req)) {
+//     return res.status(401).json({ message: 'Invalid Authentication Token' })
+//   }
+//
 //   try {
 //     const { title, ingredients, instructions, time, image } = req.body;
 

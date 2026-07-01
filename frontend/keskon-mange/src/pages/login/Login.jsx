@@ -2,6 +2,7 @@ import Logo from '../../assets/logo.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { backendBaseUrl } from '../../utils.js';
+import axios from 'axios';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -32,6 +33,9 @@ export default function Login() {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
+      // Pour chaque requête vers le backend, on met le token dans le header
+      axios.defaults.headers['authentication'] = data.token;
+
       navigate('/home');
     } catch (err) {
       console.error(err);
@@ -43,10 +47,10 @@ export default function Login() {
     <>
       <div className="p-4 min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <img src={Logo} alt="Keskon Mange Logo" className="m-auto mb-8" />
+          <img src={Logo} alt="Keskon Mange Logo" className="mx-auto mb-8" />
           <h1>Connecter un compte</h1>
 
-          <form onSubmit={handleSubmit} className="my-2 space-y-2">
+          <form onSubmit={handleSubmit} className="flex flex-col items-center my-2 space-y-2">
             <input
               type="email"
               name="email"

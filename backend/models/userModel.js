@@ -2,14 +2,43 @@ const { pool } = require('../config/connectionDb');
 
 class User {
   static async createUser({ email, username, passwordHash }) {
-    const query = `
+    const client = await pool.connect();
+
+    try {
+      // on démarre une transaction comme ça on s'assure que les deux requêtes passent ou aucune ne passe
+      await client.query('BEGIN');
+
+      // on crée l'utilisateur
+      const userResult = await client.query(
+        `
         INSERT INTO users (email, username, password_hash)
         VALUES ($1, $2, $3)
-        RETURNING id, email, username, created_at;
-    `;
-    const values = [email, username, passwordHash];
-    const result = await pool.query(query, values);
-    return result.rows[0];
+        RETURNING id, email, username, created_at
+        `,
+        [email, username, passwordHash]
+      );
+
+      const user = userResult.rows[0];
+
+      // on met par défaut le régime alimentaire de l'utilisateur à "omnivore"
+      await client.query(
+        `
+        INSERT INTO preferences_user (id_user, diet)
+        VALUES ($1, $2)
+        `,
+        [user.id, 'omnivore']
+      );
+      // si on arrive ici c'est que les deux requêtes ont réussies, on peut valider la transaction
+      await client.query('COMMIT');
+      return user;
+
+    } catch (error) {
+      // en cas d'erreur on annule la transaction pour éviter d avoir des données incohérente
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 
   static async findUserByEmail(email) {
@@ -20,6 +49,76 @@ class User {
   static async findUserById(id) {
     const result = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
     return result.rows[0];
+  }
+
+  static async getFavorites(id_user) {
+    const query = `
+      SELECT meals.*, 
+      COALESCE(AVG(c.note), 0) AS avg_note,
+      COUNT(c.note) AS nb_comments
+      FROM meals
+      JOIN favorites_user ON meals.id_meal = favorites_user.id_meal
+      LEFT JOIN commentaires_meal c ON c.id_meal = meals.id_meal
+      WHERE favorites_user.id_user = $1
+      GROUP BY meals.id_meal
+      ORDER BY meals.str_meal ASC
+    `;
+    const values = [id_user];
+    const result = await pool.query(query, values);
+    return result.rows;
+  }
+  
+  static async addToFavorites(id_user, id_meal) {
+    const query = `
+      INSERT INTO favorites_user (id_user, id_meal)
+      VALUES ($1, $2)
+    `;
+    const values = [id_user, id_meal];
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  }
+
+  static async deleteFavorite(id_user, id_meal) {
+    const query = `
+      DELETE FROM favorites_user
+      WHERE id_user = $1 AND id_meal = $2
+    `;
+    const values = [id_user, id_meal];
+    await pool.query(query, values);
+  }
+
+  static async isFavorite(id_user, id_meal) {
+    const query = `
+      SELECT 1 FROM favorites_user
+      WHERE id_user = $1 AND id_meal = $2
+    `;
+    const values = [id_user, id_meal];
+    const result = await pool.query(query, values);
+    return result.rowCount > 0;
+  }
+
+  static async getPreferences(id_user) {
+    const query = `
+      SELECT * FROM preferences_user
+      WHERE id_user = $1
+    `;
+    const values = [id_user];
+    const result = await pool.query(query, values);
+    return result.rows;
+  }
+
+  static async updatePreferences(id_user, diet, allergies) {
+    const query = `
+      INSERT INTO preferences_user (id_user, diet, allergies)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (id_user)
+      DO UPDATE SET
+        diet = EXCLUDED.diet,
+        allergies = EXCLUDED.allergies
+    `;
+
+    const values = [id_user, diet, allergies];
+    await pool.query(query, values);
   }
 }
 

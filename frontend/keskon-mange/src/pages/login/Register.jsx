@@ -33,10 +33,8 @@ export default function Register() {
         return;
       }
 
-      // on stocke le token
-      localStorage.setItem('token', payload.token);
-
-      navigate('/home');
+      // Une fois l'inscription complète, il faut encore que l'utilisateur se login
+      navigate('/login');
     } catch (err) {
       console.error(err);
       setError('Erreur veuillez réessayer');
@@ -49,7 +47,7 @@ export default function Register() {
           <img src={Logo} alt="Keskon Mange Logo" className="m-auto mb-8" />
           <h1>Créer un compte</h1>
 
-          <form onSubmit={handleSubmit} className="my-2 space-y-2">
+          <form onSubmit={handleSubmit} className="flex flex-col items-center my-2 space-y-2">
             <input
               type="email"
               name="email"
@@ -67,6 +65,7 @@ export default function Register() {
               placeholder="Nom d'utilisateur"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              required
             />
 
             <input
