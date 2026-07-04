@@ -43,22 +43,22 @@ export default function Favorites() {
                     <span className="text-sm text-gray-600 flex mt-1">({favorites.length})</span>
                 </div>
 
+                {favorites.length === 0 && (
+                    <p>Vous n'avez pas encore de recettes favorites.</p>
+                )}
+
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {favorites.length > 0 ? (
-                        favorites.map((meal) => (
-                            <RecipePreview
-                                key={meal.id_meal}
-                                id={meal.id_meal}
-                                title={meal.str_meal}
-                                thumb={meal.str_meal_thumb}
-                                time={meal.prep_time}
-                                avg_note={meal.avg_note}
-                                nb_comments={meal.nb_comments}
-                            />
-                        ))
-                    ) : (
-                        <p>Vous n'avez pas encore de recettes favorites.</p>
-                    )}
+                    {favorites.map((meal) => (
+                        <RecipePreview
+                            key={meal.id_meal}
+                            id={meal.id_meal}
+                            title={meal.str_meal}
+                            thumb={meal.str_meal_thumb}
+                            time={meal.prep_time}
+                            avg_note={meal.avg_note}
+                            nb_comments={meal.nb_comments}
+                        />
+                    ))}
                 </div>
             </div>
 

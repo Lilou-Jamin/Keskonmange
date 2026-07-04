@@ -31,15 +31,17 @@ export default function InventoryRecipes() {
     <>
       <Header />
       <div className="p-4 mb-20 min-h-screen">
-        <p className="text-justify">
-          Voici les recettes que tu peux réaliser avec les ingrédients dans ton inventaire. Tu cherches plus de recettes
-          ? Va dans l'onglet recherche !
-        </p>
         {isLoading && <p className="text-center w-full text-gray-700 pt-8">Chargement des recettes...</p>}
         {!isLoading && (!meals || meals.length === 0) && (
           <p className="text-center w-full text-gray-700 pt-8">
             Aucune recette disponible en fonction de tes ingrédients. Parcours toutes les recettes ou ajoute des
             ingrédients à ton inventaire !
+          </p>
+        )}
+        {!isLoading && (!meals || meals.length !== 0) && (
+          <p className="text-center w-full text-gray-700 pt-8">
+          Voici les recettes que tu peux réaliser avec les ingrédients dans ton inventaire. Tu cherches plus de recettes
+          ? Va dans l'onglet recherche !
           </p>
         )}
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
