@@ -36,6 +36,15 @@ body {
   margin: 0;
 }
 
+html, body, #root {
+  background-color: var(--beige-color) !important;
+
+  /* Stops the "bounce" effect at the top and bottom of the page */
+  overscroll-behavior-y: none;
+
+  touch-action: pan-x pan-y;
+}
+
 h1 {
   font-size: 1.3rem;
   font-weight: 600;
@@ -98,7 +107,7 @@ button {
   font-size: 1rem;
   font-weight: 500;
   font-family: inherit;
-  background-color: var(--yellow-color);
+  background-color: var(--yellow-color) !important;
   cursor: pointer;
   transition: border-color 0.25s;
   color: white;
@@ -106,7 +115,7 @@ button {
 }
 
 button:hover {
-  background-color: var(--orange-color);
+  background-color: var(--orange-color) !important;
   transform: scale(1.05);
   transition: transform 0.2s;
 }
