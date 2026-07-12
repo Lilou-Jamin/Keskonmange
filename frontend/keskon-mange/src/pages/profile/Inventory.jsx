@@ -238,6 +238,11 @@ export default function Inventory() {
             </div>
             <div className="border-2 border-(--light-grey-color) rounded-lg py-2">
               <div className="grid grid-cols-3 pt-3">
+                {inventory?.length === 0 && (
+                  <p className="text-gray-600 text-sm col-span-3">
+                    Aucun ingrédient dans votre inventaire
+                  </p>
+                )}
                 {inventory?.map((ingredient, index) => (
                   <div className="mx-auto text-center" key={index} onClick={() => editIngredient(ingredient)}>
                     <div className="bg-gray-200 rounded-full p-1 w-fit mx-auto mb-2">
