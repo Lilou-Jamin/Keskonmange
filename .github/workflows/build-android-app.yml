@@ -1,0 +1,79 @@
+name: build-android-app.yml
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - tauri
+  workflow_dispatch:
+
+jobs:
+  build-android-app:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: '1.93.0'
+          target: aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r29
+          link-to-sdk: true
+
+      - name: Install Frontend Dependencies
+        working-directory: frontend/keskon-mange
+        run: npm ci
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > $RUNNER_TEMP/keystore.jks
+
+      - name: Setup Android Signing
+        working-directory: frontend/keskon-mange/src-tauri/gen/android
+        run: |
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" > keystore.properties
+          echo "password=${{ secrets.ANDROID_KEY_PASSWORD }}" >> keystore.properties
+          echo "storeFile=$RUNNER_TEMP/keystore.jks" >> keystore.properties
+
+      - name: Build Signed APK & AAB
+        env:
+          NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+        working-directory: frontend/keskon-mange
+        run: npm run tauri android build
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-universal-apk
+          path: frontend/keskon-mange/src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release.apk
+
+      - name: Upload AAB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-bundle-aab
+          path: frontend/keskon-mange/src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release.aab
