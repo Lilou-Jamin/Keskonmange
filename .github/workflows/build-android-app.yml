@@ -1,10 +1,9 @@
-name: build-android-app.yml
+name: Build Android Application
 on:
   push:
     branches:
       - main
       - develop
-      - tauri
   workflow_dispatch:
 
 jobs:
@@ -69,11 +68,11 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-universal-apk
+          name: keskonmange-universal-apk
           path: frontend/keskon-mange/src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release.apk
 
       - name: Upload AAB Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-bundle-aab
+          name: keskonmange-bundle-aab
           path: frontend/keskon-mange/src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release.aab
