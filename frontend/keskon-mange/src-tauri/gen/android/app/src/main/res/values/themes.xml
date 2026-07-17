@@ -1,0 +1,18 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <!-- Base application theme. -->
+  <style name="Theme.app" parent="Theme.MaterialComponents.Light.NoActionBar">
+
+    <!-- Force dark text/icons on the top status bar -->
+    <item name="android:windowLightStatusBar">true</item>
+
+    <!-- Force dark icons on the bottom navigation bar -->
+    <item name="android:windowLightNavigationBar">true</item>
+
+    <!-- Fixes the Android 12+ Splash Screen background -->
+    <item name="android:windowSplashScreenBackground">#FFF7EC</item>
+
+    <!-- Fixes the base window canvas (older Android splash screens & underneath the WebView) -->
+    <item name="android:windowBackground">#FFF7EC</item>
+
+  </style>
+</resources>
