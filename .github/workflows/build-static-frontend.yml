@@ -1,0 +1,33 @@
+name: Build Static Frontend
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+jobs:
+  build-static-frontend:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Install Dependencies
+        working-directory: frontend/keskon-mange
+        run: npm ci
+
+      - name: Build Static Files
+        working-directory: frontend/keskon-mange
+        run: npm run build
+
+      - name: Upload Static Artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: keskonmange-static-frontend
+          path: frontend/keskon-mange/dist/
