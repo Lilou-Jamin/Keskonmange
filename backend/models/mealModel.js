@@ -7,49 +7,65 @@ class Meal {
   }
 
   // pour la recherche de recettes par via barre de recherche
-  static async findByName(name, diet, allergies) {
+  static async findByName(name, diet, allergies = []) {
+    console.log("name:", name, "diet:", diet, "allergies:", allergies);
+
     let query = `
-      SELECT m.*, 
-      COALESCE(AVG(c.note), 0) AS avg_note,
-      COUNT(c.note) AS nb_comments
+      SELECT
+        m.*,
+        COALESCE(AVG(c.note), 0) AS avg_note,
+        COUNT(c.note) AS nb_comments
       FROM meals m
-      LEFT JOIN commentaires_meal c 
-      ON c.id_meal = m.id_meal
+      LEFT JOIN commentaires_meal c
+        ON c.id_meal = m.id_meal
       WHERE m.str_meal ILIKE $1
-      GROUP BY m.id_meal  
     `;
 
     const values = [`%${name}%`];
     let paramIndex = 2;
 
-    // si y'a un régime particulier on filtre les résultats en fonction de ça
+    // filtre selon le régime alimentaire
     if (diet === "vegetarian") {
-      query += ` AND m.str_category ILIKE $${paramIndex}`;
+      query += `
+        AND m.str_category ILIKE $${paramIndex}
+      `;
+
       values.push("%Vegetarian%");
       paramIndex++;
     }
+
     if (diet === "vegan") {
-      query += ` AND m.str_category ILIKE $${paramIndex}`;
+      query += `
+        AND m.str_category ILIKE $${paramIndex}
+      `;
+
       values.push("%Vegan%");
       paramIndex++;
     }
 
-    // si l'utilisateur a des allergies on exclut de la recherche
-    // les recettes qui contiennent ces allergènes
-    // on compare en minuscule pour éviter les problèmes de casse
-    if (allergies.length > 0) {
+    // exclut les recettes contenant un allergène
+    if (Array.isArray(allergies) && allergies.length > 0) {
       query += `
         AND NOT EXISTS (
           SELECT 1
           FROM lien_meals_ingredients lmi
-          JOIN ingredients i ON i.id_ingredient = lmi.id_ingredient
+          JOIN ingredients i
+            ON i.id_ingredient = lmi.id_ingredient
           WHERE lmi.id_meal = m.id_meal
-          AND LOWER(i.str_ingredient) = ANY($${paramIndex}::text[]) 
-          )
+            AND LOWER(i.str_ingredient) = ANY($${paramIndex}::text[])
+        )
       `;
-      values.push(allergies.map((allergy) => allergy.toLowerCase()));
+
+      values.push(
+        allergies.map((allergy) => allergy.trim().toLowerCase())
+      );
+
       paramIndex++;
     }
+    query += `
+      GROUP BY m.id_meal
+      ORDER BY m.str_meal ASC
+    `;
 
     const result = await pool.query(query, values);
     return result.rows;
