@@ -4,6 +4,7 @@ import { backendBaseUrl } from "../../utils";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Header from "../../components/Header";
+import { useNavigate } from 'react-router-dom';
 
 export default function Favorites() {
     const [preferences, setPreferences] = useState([]);
@@ -13,6 +14,7 @@ export default function Favorites() {
     const [allergies, setAllergies] = useState([]);
     const [ingredientSearch, setIngredientSearch] = useState('');
     const [ingredients, setIngredients] = useState([]);
+    const navigate = useNavigate();
 
     const fetchPreferences = async () => {
         try {
@@ -137,8 +139,8 @@ export default function Favorites() {
 
                 <div className="flex justify-center">
                     <button className="btn mt-4" onClick={() => {
-                        axios.post(`${backendBaseUrl}/users/updatepreferences/${id_user}`, {diet, allergies,}).catch(() => {                        
-                            alert('Erreur lors de la mise à jour des préférences');
+                        axios.post(`${backendBaseUrl}/users/updatepreferences/${id_user}`, {diet, allergies,}).then(() => {
+                            navigate('/profile');
                         });
                     }}>Enregistrer</button>
                 </div>
