@@ -100,6 +100,33 @@ p {
   background-color: transparent;
 }
 
+.password-input {
+  font-size: 1rem;
+  font-weight: 400;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid var(--grey-color);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  margin-top: 0.5rem;
+  box-sizing: border-box;
+  background-color: transparent;
+}
+
+.password-input input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+}
+
+.password-input img {
+  flex-shrink: 0;
+}
+
 button {
   border-radius: 100px;
   border: 1px solid transparent;

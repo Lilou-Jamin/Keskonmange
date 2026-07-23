@@ -2,6 +2,8 @@ import Logo from '../../assets/logo.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { backendBaseUrl } from '../../utils.js';
+import EyeOpen from '../../assets/eye-open.svg';
+import EyeClosed from '../../assets/eye-closed.svg';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -9,6 +11,7 @@ export default function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [visible, setVisible] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -52,7 +55,7 @@ export default function Register() {
               type="email"
               name="email"
               className="input max-w-fit"
-              placeholder="Adresse e-mail"
+              placeholder="E-mail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -67,17 +70,27 @@ export default function Register() {
               onChange={(e) => setUsername(e.target.value)}
               required
             />
+          
+            <div className="password-input max-w-fit">
+              <input
+                type={visible ? "text" : "password"}
+                placeholder="Mot de passe"
+                className="max-w-52.25"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={8}
+              />
 
-            <input
-              type="password"
-              name="password"
-              className="input max-w-fit"
-              placeholder="Mot de passe"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-            />
+              <img
+                src={visible ? EyeOpen : EyeClosed}
+                alt="Afficher le mot de passe"
+                onClick={() => setVisible(!visible)}
+                className="cursor-pointer"
+                width={20}
+              />
+            </div>
+            <span className="text-xs text-gray-500 text-justify max-w-65">8 caractères minimum, une majuscule, une minuscule, un chiffre et un caractère spécial</span>
 
             {error && <p className="error-message">{error}</p>}
 
